@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "konsta/react/theme.css";
 
 :root {
   --background: #ffffff;

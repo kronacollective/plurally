@@ -1,65 +1,110 @@
-import Image from "next/image";
+"use client";
+import { App, MenuList, MenuListItem, Navbar, Page, Tabbar, TabbarLink, ToolbarPane } from 'konsta/react';
+import { Box, Drawer, Grid, IconButton, Stack, Typography, useMediaQuery, useTheme } from '@mui/material';
+import { useCallback, useState } from 'react';
+import PersonIcon from '@mui/icons-material/Person';
+import MemberList from './components/members/MemberList';
+import MenuDrawer from './components/Drawer';
+import { Menu } from '@mui/icons-material';
+import { Pane, SplitPane } from 'react-split-pane';
 
-export default function Home() {
+const PAGES = {
+  members: MemberList,
+};
+
+const PAGE_NAMES = {
+  members: 'Members',
+};
+
+const DRAWER_WIDTH = 240
+
+export default function Plurally() {
+  const [ page, setPage ] = useState<'members'>('members');
+  const [ mobile_open, setMobileOpen ] = useState<boolean>(false);
+  const [ is_closing, setIsClosing ] = useState<boolean>(false);
+
+  const theme = useTheme()
+  const is_mobile = useMediaQuery(theme.breakpoints.down('sm'));
+
+  const PageComponent = PAGES[page];
+
+  const handleDrawerClose = useCallback(() => {
+    setIsClosing(true);
+    setMobileOpen(false);
+  }, []);
+
+  const handleDrawerTransitionEnd = useCallback(() => {
+    setIsClosing(false);
+  }, []);
+
+  const handleDrawerToggle = useCallback(() => {
+    if (!is_closing) setMobileOpen(mo => !mo);
+  }, [is_closing]);
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <App theme='material'>
+      <Page>
+        {/* <Box
+          component="nav"
+          sx={{ width: { sm: `calc(100% - ${DRAWER_WIDTH}px)`}, ml: { sm: `${DRAWER_WIDTH}px` } }}
+        >
+        </Box> */}
+        <Box
+          component="nav"
+          sx={{ width: { sm: DRAWER_WIDTH }, flexShrink: { sm: 0 } }}
+          aria-label="navigation"
+        >
+          <Drawer
+            variant="temporary"
+            open={mobile_open}
+            onTransitionEnd={handleDrawerTransitionEnd}
+            onClose={handleDrawerClose}
+            sx={{
+              display: { xs: 'block', sm: 'none' },
+              '& .MuiDrawer-paper': { boxSizing: 'border-box', width: DRAWER_WIDTH }
+            }}
+            slotProps={{
+              root: {
+                keepMounted: true
+              }
+            }}
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+            <MenuDrawer
+              page={page}
+              setPage={setPage}
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+          </Drawer>
+          <Drawer open
+            variant="permanent"
+            sx={{
+              display: { xs: 'none', sm: 'block' },
+              '& .MuiDrawer-paper': { boxSizing: 'border-box', width: DRAWER_WIDTH }
+            }}
           >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+            <MenuDrawer
+              page={page}
+              setPage={setPage}
+            />
+          </Drawer>
+        </Box>
+        <Box
+          component="main"
+          sx={{ flexGrow: 1, width: `calc(100% - ${is_mobile ? 0 : DRAWER_WIDTH}px)`, height: '100vh', ml: `${is_mobile ? 0 : DRAWER_WIDTH}px` }}
+        >
+          <Stack sx={{ mt: 7 }}>
+            <Navbar
+              title={PAGE_NAMES[page]}
+              className="top-0 fixed"
+              left={
+                <IconButton aria-label="open toolbar" onClick={handleDrawerToggle}>
+                  <Menu/>
+                </IconButton>
+              }
+            />
+            <PageComponent/>
+          </Stack>
+        </Box>
+      </Page>
+    </App>
   );
 }
