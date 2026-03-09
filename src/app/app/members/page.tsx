@@ -2,11 +2,12 @@
 import { useShortQuery } from "@/lib/hooks/useShortQuery";
 import { useSupabase } from "@/lib/supabase/client";
 import styled from "@emotion/styled";
+import { ArrowDownward, ArrowUpward } from "@mui/icons-material";
 import Add from "@mui/icons-material/Add";
 import { List, ListItem, ListItemAvatar, ListItemButton, ListItemText } from "@mui/material";
 import { Block, BlockTitle, Fab } from "konsta/react";
 import Image from 'next/image';
-import { LeadingActions, SwipeableList, SwipeableListItem, SwipeAction } from "react-swipeable-list";
+import { LeadingActions, SwipeableList, SwipeableListItem, SwipeAction, TrailingActions } from "react-swipeable-list";
 import 'react-swipeable-list/dist/styles.css';
 
 const ActionContent = styled.div`
@@ -21,17 +22,6 @@ const ActionContent = styled.div`
   user-select: none;
 `;
 
-const MemberLeadingActions = () => {
-  return (
-    <LeadingActions>
-      <SwipeAction onClick={() => console.info('Swiped')}>
-        <ActionContent style={{ backgroundColor: '#555' }}>
-          ↓
-        </ActionContent>
-      </SwipeAction>
-    </LeadingActions>
-  );
-};
 
 export default function Members() {
   const supabase = useSupabase();
@@ -56,6 +46,30 @@ export default function Members() {
   );
   console.log('user, members', user, members);
 
+  const MemberLeadingActions = () => {
+    return (
+      <LeadingActions>
+        <SwipeAction onClick={() => console.info('Swiped right')}>
+          <ActionContent style={{ backgroundColor: '#555' }}>
+            <ArrowDownward/>
+          </ActionContent>
+        </SwipeAction>
+      </LeadingActions>
+    );
+  };
+
+  const MemberTrailingActions = () => {
+    return (
+      <TrailingActions>
+        <SwipeAction onClick={() => console.info('Swiped left')}>
+          <ActionContent className="bg-lime-400">
+            <ArrowUpward/>
+          </ActionContent>
+        </SwipeAction>
+      </TrailingActions>
+    )
+  }
+
   return (
     <div>
       <Fab
@@ -71,8 +85,9 @@ export default function Members() {
                 key={member.id}
                 // style={{ backgroundColor: `rgba(${member.color}, 20%)`, borderRadius: '10px' }}
                 leadingActions={<MemberLeadingActions/>}
+                trailingActions={<MemberTrailingActions/>}
               >
-                <ListItemButton >
+                <ListItemButton>
                   <ListItemAvatar sx={{ mr: 2 }}>
                     <Image
                       className="rounded-full"
