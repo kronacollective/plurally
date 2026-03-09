@@ -1,7 +1,7 @@
 "use client";
 import { App, MenuList, MenuListItem, Navbar, Page, Tabbar, TabbarLink, ToolbarPane } from 'konsta/react';
 import { Box, Drawer, Grid, IconButton, Stack, Typography, useMediaQuery, useTheme } from '@mui/material';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import PersonIcon from '@mui/icons-material/Person';
 import MemberList from './components/members/MemberList';
 import MenuDrawer from './components/Drawer';
@@ -42,7 +42,7 @@ export default function Plurally() {
   }, [is_closing]);
 
   return (
-    <App theme='material'>
+    <App theme='material' className="safe-areas">
       <Page>
         {/* <Box
           component="nav"
