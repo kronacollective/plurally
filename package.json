@@ -16,12 +16,16 @@
     "@supabase/ssr": "^0.9.0",
     "@supabase/supabase-js": "^2.98.0",
     "@tanstack/react-query": "^5.90.21",
+    "immer": "^11.1.4",
     "konsta": "^5.0.7",
+    "mui-color-input": "^7.0.0",
+    "nanoid": "^5.1.6",
     "next": "16.1.6",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-split-pane": "^3.2.0",
-    "react-swipeable-list": "^1.10.0"
+    "react-swipeable-list": "^1.10.0",
+    "use-immer": "^0.11.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
