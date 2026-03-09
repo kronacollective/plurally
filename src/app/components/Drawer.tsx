@@ -7,10 +7,9 @@ import { Logout } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
 
 export default function MenuDrawer({
-  page, setPage
+  page,
 }: {
-  page: 'members',
-  setPage: React.Dispatch<React.SetStateAction<'members'>>
+  page: string,
 }) {
   const supabase = useSupabase();
   const router = useRouter();
@@ -19,8 +18,8 @@ export default function MenuDrawer({
       <MenuList>
         <MenuListItem
           title="Members"
-          active={page === 'members'}
-          onClick={() => setPage('members')}
+          active={page === '/app/members'}
+          onClick={() => router.push('/app/members')}
           media={<PersonIcon/>}
         />
       </MenuList>

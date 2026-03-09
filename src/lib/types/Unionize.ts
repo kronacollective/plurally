@@ -1,0 +1,3 @@
+export type Unionize<T extends object> = {
+  [k in keyof T]: T[k]
+}[keyof T];
