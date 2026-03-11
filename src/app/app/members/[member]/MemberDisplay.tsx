@@ -6,12 +6,16 @@ import Image from "next/image";
 import { MuiColorInput } from "mui-color-input";
 import { useCallback, useEffect, useOptimistic, useState, useTransition } from "react";
 import { useSupabase } from "@/lib/supabase/client";
-import { Block, Fab, Link, Sheet, Toolbar, ToolbarPane } from "konsta/react";
-import { Check, Close, Save } from "@mui/icons-material";
+import { Block, Fab, Link, Sheet, Tabbar, TabbarLink, Toolbar, ToolbarPane } from "konsta/react";
+import { Check, Close, Person, Save, Settings } from "@mui/icons-material";
 import { useShortMutations, useShortQuery } from "@/lib/hooks/useShortQuery";
 import { useImmer } from "use-immer";
+import { DRAWER_WIDTH } from "@/lib/globals";
+import MainMemberDisplay from "./tabs/Main";
 
-const SIZES = [300, 300]
+const TAB_COMPONENTS = {
+  main: MainMemberDisplay,
+}
 
 export default function MemberDisplay({
   member_id,
@@ -24,7 +28,7 @@ export default function MemberDisplay({
   const is_mobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const [ member_state, updateMemberState ] = useImmer<Record<string, string | null>>({});
-  const [ avatar_sheet_open, setAvatarSheetOpen ] = useState(false);
+  const [ active_tab, setActiveTab ] = useState('main');
 
   const { data: member } = useShortQuery(
     ["member", member_id],
@@ -57,100 +61,35 @@ export default function MemberDisplay({
     }
   );
 
+  const Tab = TAB_COMPONENTS[active_tab];
+
   return !member ? <></> : (
     <Stack gap={2} display="flex" sx={{ width: '100%', justifyContent: 'center', alignItems: 'center' }}>
-      <Link onClick={() => setAvatarSheetOpen(true)}>
-        <Avatar variant="rounded" sx={{ width: SIZES[0], height: SIZES[1], mt: 3, mb: 3 }}>
-          {member && member.avatar ? (
-            <Image
-              src={member.avatar}
-              alt={`Profile picture for ${member.name}`}
-              width={SIZES[0]}
-              height={SIZES[1]}
-            />
-          ) : (
-            "?"
-          )}
-        </Avatar>
-      </Link>
-      <Sheet
-        className="pb-safe"
-        opened={avatar_sheet_open}
-        onBackdropClick={() => setAvatarSheetOpen(false)}
-        style={{ zIndex: 1400, maxWidth: '500px', left: is_mobile ? '0' : '40%' }}
-      >
-        <Toolbar top className="justify-end">
-          <ToolbarPane>
-            <Link iconOnly onClick={() => setAvatarSheetOpen(false)}>
-              <Close/>
-            </Link>
-          </ToolbarPane>
-          <ToolbarPane>
-            <Link iconOnly onClick={() => {
-              member_mutations.update();
-              setAvatarSheetOpen(false);
-            }}>
-              <Check/>
-            </Link>
-          </ToolbarPane>
-        </Toolbar>
-        <Block>
-          <TextField
-            label="Avatar URL"
-            variant="outlined"
-            sx={{ width: '100%' }}
-            value={member_state.avatar}
-            onChange={ev => updateMemberState(draft => { draft.avatar = ev.target.value })}
-          />
-        </Block>
-      </Sheet>
-      <Stack gap={2} display="flex" sx={{ width: '100%', justifyContent: 'center', alignItems: 'center' }}>
-        <TextField
-          name="name"
-          label="Name"
-          variant="outlined"
-          // defaultValue={member?.name}
-          value={member_state.name}
-          onChange={ev => updateMemberState(draft => { draft.name = ev.target.value })}
-          sx={{ width: '90%' }}
-        />
-        <TextField
-          name="pronouns"
-          label="Pronouns"
-          variant="outlined"
-          // defaultValue={member?.pronouns}
-          value={member_state.pronouns}
-          onChange={ev => updateMemberState(draft => { draft.pronouns = ev.target.value })}
-          sx={{ width: '90%' }}
-        />
-        <TextField multiline
-          name="description"
-          label="Description"
-          variant="outlined"
-          // defaultValue={member?.description}
-          value={member_state.description}
-          onChange={ev => updateMemberState(draft => { draft.description = ev.target.value })}
-          minRows={3}
-          sx={{ width: '90%' }}
-        />
-        <MuiColorInput
-          name="color"
-          label="Color"
-          variant="outlined"
-          format="rgb"
-          value={member?.color ? `rgb(${member.color})` : 'rgb(255, 255, 255)'}
-          onChange={nv => updateMemberState(draft => { draft.color = nv.slice(4, -1) })}
-          sx={{ width: '90%' }}
-        />
-      </Stack>
-      <Fab
-        className="fixed bottom-safe-4 right-safe-4"
-        icon={<Save/>}
-        text="Save"
-        textPosition="after"
-        component="button"
-        onClick={member_mutations.update}
+      <Tab
+        member={member}
+        member_mutations={member_mutations}
+        member_state={member_state}
+        updateMemberState={updateMemberState}
       />
+      <Tabbar
+        className="right-0 bottom-0 fixed"
+        style={{ left: is_mobile ? '0' : DRAWER_WIDTH, width: `calc(100% - ${DRAWER_WIDTH}px)` }}
+      >
+        <ToolbarPane>
+          <TabbarLink
+            active={active_tab === 'main'}
+            onClick={() => setActiveTab('main')}
+            icon={<Person/>}
+            label="Main"
+          />
+          <TabbarLink
+            active={active_tab === 'settings'}
+            onClick={() => setActiveTab('settings')}
+            icon={<Settings/>}
+            label="Settings"
+          />
+        </ToolbarPane>
+      </Tabbar>
     </Stack>
   );
 }

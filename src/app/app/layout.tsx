@@ -6,8 +6,7 @@ import Menu from "@mui/icons-material/Menu";
 import { useCallback, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { QueryProvider } from "../components/QueryProvider";
-
-const DRAWER_WIDTH = 240
+import { DRAWER_WIDTH } from "@/lib/globals";
 
 export default function AppLayout({
   children,
