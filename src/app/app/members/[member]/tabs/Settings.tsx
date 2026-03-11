@@ -21,7 +21,7 @@ export default function SettingsMemberDisplay({
 }) {
   const router = useRouter();
   return (
-    <>
+    <div className="p-3">
       <Button
         className="bg-red-700"
         onClick={() => {
@@ -31,6 +31,6 @@ export default function SettingsMemberDisplay({
       >
         Delete member
       </Button>
-    </>
+    </div>
   )
 }
