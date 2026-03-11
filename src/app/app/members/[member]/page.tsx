@@ -7,16 +7,10 @@ export default async function MemberPage({
   params: Promise<{ member: string }>
 }) {
   const { member: member_id } = await params;
-  const supabase = await createClient();
-  const { data: member } = await supabase
-    .from('members')
-    .select()
-    .eq('id', member_id)
-    .single();
 
   return (
     <div>
-      <MemberDisplay member={member} />
+      <MemberDisplay member_id={member_id} />
     </div>
   )
 }
