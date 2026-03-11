@@ -18,6 +18,7 @@ export default function MainMemberDisplay({
   member: Tables<'members'>
   member_mutations: {
     update: () => Promise<void>;
+    deleteMember: () => Promise<void>;
   } & {
     invalidateCache: () => Promise<void>;
   },

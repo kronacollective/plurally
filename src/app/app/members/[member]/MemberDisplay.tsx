@@ -12,9 +12,11 @@ import { useShortMutations, useShortQuery } from "@/lib/hooks/useShortQuery";
 import { useImmer } from "use-immer";
 import { DRAWER_WIDTH } from "@/lib/globals";
 import MainMemberDisplay from "./tabs/Main";
+import SettingsMemberDisplay from "./tabs/Settings";
 
 const TAB_COMPONENTS = {
   main: MainMemberDisplay,
+  settings: SettingsMemberDisplay,
 }
 
 export default function MemberDisplay({
@@ -58,9 +60,16 @@ export default function MemberDisplay({
           .update(member_state)
           .eq('id', member_id);
       },
+      deleteMember: async () => {
+        await supabase
+          .from('members')
+          .delete()
+          .eq('id', member_id);
+      }
     }
   );
 
+  // @ts-expect-error This is probably not proper, but we select a tab component from an object
   const Tab = TAB_COMPONENTS[active_tab];
 
   return !member ? <></> : (
