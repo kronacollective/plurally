@@ -12,6 +12,11 @@ import { useImmer } from "use-immer";
 import 'react-swipeable-list/dist/styles.css';
 import { nanoid } from 'nanoid';
 
+type FrontMutators = {
+  front: (member_id: string) => Promise<void>,
+  unfront: (member_id: string) => Promise<void>
+};
+
 export default function Members() {
   const supabase = useSupabase();
   const router = useRouter();
@@ -58,6 +63,44 @@ export default function Members() {
           });
       }
     }
+  );
+
+  const { data: active_fronts } = useShortQuery(
+    ["fronts", "active"],
+    async () => {
+      const { data, error } = await supabase
+        .from('fronts')
+        .select()
+        .in('member', members?.map(mem => mem.id) ?? [])
+        .is('end', null);
+      if (error) console.error('active_fronts', error);
+      return data;
+    },
+    [ members ],
+  );
+
+  // @ts-expect-error Strictness is making short mutations not work anymore
+  const front_mutations = useShortMutations<FrontMutators>(
+    ["fronts"],
+    {
+      front: async (member_id: string) => {
+        const { error } = await supabase
+          .from('fronts')
+          .insert({
+            member: member_id,
+          });
+        if (error) console.error(error);
+      },
+      unfront: async (member_id: string) => {
+        await supabase
+          .from('fronts')
+          .update({
+            end: new Date().toISOString(),
+          })
+          .eq('member', member_id)
+          .is('end', null);
+      }
+    },
   );
 
   return (
@@ -127,18 +170,25 @@ export default function Members() {
         <BlockTitle style={{ marginBottom: 1 }}>All members</BlockTitle>
         <List>
           { members?.map(member => {
+            const is_fronting = active_fronts?.find(fr => fr.member === member.id);
             return (
               <ListItem
                 key={member.id}
                 style={{
-                  backgroundColor: `rgba(${member.color ?? '255, 255, 255'}, 20%)`,
+                  backgroundColor: `rgba(${member.color ?? '255, 255, 255'}, ${is_fronting ? 35 : 20}%)`,
                   borderRadius: '10px',
                   marginBottom: 5,
                 }}
                 secondaryAction={
-                  <IconButton>
-                    <ArrowUpward/>
-                  </IconButton>
+                  is_fronting ? (
+                    <IconButton onClick={() => front_mutations.unfront(member.id)}>
+                      <ArrowDownward/>
+                    </IconButton>
+                  ) : (
+                    <IconButton onClick={() => front_mutations.front(member.id)}>
+                      <ArrowUpward/>
+                    </IconButton>
+                  )
                 }
               >
                 <ListItemButton

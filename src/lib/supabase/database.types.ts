@@ -14,6 +14,38 @@ export type Database = {
   }
   public: {
     Tables: {
+      fronts: {
+        Row: {
+          end: string | null
+          id: number
+          member: string
+          message: string | null
+          start: string
+        }
+        Insert: {
+          end?: string | null
+          id?: number
+          member: string
+          message?: string | null
+          start?: string
+        }
+        Update: {
+          end?: string | null
+          id?: number
+          member?: string
+          message?: string | null
+          start?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fronts_member_fkey"
+            columns: ["member"]
+            isOneToOne: false
+            referencedRelation: "members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       members: {
         Row: {
           avatar: string | null
