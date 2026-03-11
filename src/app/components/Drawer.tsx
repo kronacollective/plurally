@@ -3,7 +3,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import React from "react";
 import { Divider } from "@mui/material";
 import { useSupabase } from "@/lib/supabase/client";
-import { Logout } from "@mui/icons-material";
+import { Logout, Timelapse } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
 
 export default function MenuDrawer({
@@ -21,6 +21,12 @@ export default function MenuDrawer({
           active={page === '/app/members'}
           onClick={() => router.push('/app/members')}
           media={<PersonIcon/>}
+        />
+        <MenuListItem
+          title="Fronts"
+          active={page === '/app/fronts'}
+          onClick={() => router.push('/app/fronts')}
+          media={<Timelapse/>}
         />
       </MenuList>
       <Divider variant="middle"/>
