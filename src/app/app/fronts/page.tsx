@@ -39,7 +39,7 @@ export default function Fronts() {
             active={active_tab === 'analytics'}
             onClick={() => setActiveTab('analytics')}
             icon={<Analytics/>}
-            label="History"
+            label="Analytics"
           />
         </ToolbarPane>
       </Tabbar>

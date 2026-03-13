@@ -15,11 +15,17 @@ export default function HistoryFronts() {
   const { data: fronts_in_range } = useShortQuery(
     ['fronts', 'range'],
     async () => {
-      const { data } = await supabase
+      const { data: inactive_fronts } = await supabase
         .from('fronts')
         .select('*, member ( * )')
         .gte('end', start_date.toISOString())
         .lte('start', end_date.toISOString());
+      const { data: active_fronts } = await supabase
+        .from('fronts')
+        .select('*, member ( * )')
+        .lte('start', end_date.toISOString())
+        .is('end', null);
+      const data = [ ...active_fronts!, ...inactive_fronts! ];
       return data;
     }
   );
@@ -40,13 +46,13 @@ export default function HistoryFronts() {
       />
       <List>
         {fronts_in_range?.map(fir => {
-          const front_interval = interval(fir.start, fir.end!);
+          const front_interval = interval(fir.start, fir.end ?? new Date());
           const front_duration = intervalToDuration(front_interval);
           const front_duration_label = formatDuration(front_duration);
           return (
             <ListItem key={fir.id}
               style={{
-                backgroundColor: `rgba(${fir.member.color ?? '255, 255, 255'}, 20%)`,
+                backgroundColor: `rgba(${fir.member.color ?? '255, 255, 255'}, ${fir.end ? 20 : 35}%)`,
                 borderRadius: '10px',
                 marginBottom: 5,
               }}
@@ -66,7 +72,7 @@ export default function HistoryFronts() {
               </ListItemAvatar>
               <ListItemText
                 primary={fir.member.name}
-                secondary={front_duration_label}
+                secondary={fir.end ? front_duration_label : `Active — ${front_duration_label}`}
               />
             </ListItem>
           )
