@@ -111,7 +111,7 @@ export default function MainMemberDisplay({
           label="Color"
           variant="outlined"
           format="rgb"
-          value={member?.color ? `rgb(${member.color})` : 'rgb(255, 255, 255)'}
+          value={member_state?.color ? `rgb(${member_state.color})` : 'rgb(255, 255, 255)'}
           onChange={nv => updateMemberState(draft => { draft.color = nv.slice(4, -1) })}
           sx={{ width: '90%' }}
         />
