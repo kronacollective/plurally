@@ -6,9 +6,11 @@ import { CalendarIcon } from "@mui/x-date-pickers";
 import { Tabbar, TabbarLink, ToolbarPane } from "konsta/react";
 import { useState } from "react";
 import HistoryFronts from "./tabs/History";
+import AnalyticsFronts from "./tabs/Analytics";
 
 const TAB_COMPONENTS = {
   history: HistoryFronts,
+  analytics: AnalyticsFronts,
 };
 
 export default function Fronts() {
