@@ -2,18 +2,9 @@ import { useShortQuery } from "@/lib/hooks/useShortQuery";
 import { useSupabase } from "@/lib/supabase/client"
 import { Tables } from "@/lib/supabase/database.types";
 import { List, ListItem, ListItemAvatar, ListItemText } from "@mui/material";
-import { add, clamp, Duration, formatDuration, interval, intervalToDuration } from "date-fns";
+import { clamp, interval } from "date-fns";
 import Image from "next/image";
 import { useMemo } from "react";
-
-const addDurations = (duration1: Duration, duration2: Duration) => {
-  const base_date = new Date(0) // can probably be any date, 0 just seemed like a good start
-
-  return intervalToDuration({
-    start: base_date,
-    end: add(add(base_date, duration1), duration2),
-  })
-};
 
 export default function AnalyticsCount({
   start_date,
