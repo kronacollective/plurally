@@ -4,11 +4,17 @@ import { App, Navbar, Page } from "konsta/react";
 import MenuDrawer from "../components/Drawer";
 import Menu from "@mui/icons-material/Menu";
 import { useCallback, useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { QueryProvider } from "../components/QueryProvider";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { DRAWER_WIDTH } from "@/lib/globals";
+
+const TITLES = {
+  '^/app/members$': 'Members',
+  '^/app/members/(.+)$': 'Member',
+  '^/app/fronts$': 'Fronts',
+};
 
 export default function AppLayout({
   children,
@@ -35,6 +41,12 @@ export default function AppLayout({
   const handleDrawerToggle = useCallback(() => {
     if (!is_closing) setMobileOpen(mo => !mo);
   }, [is_closing]);
+
+  const title = Object
+    .entries(TITLES)
+    .map(([K, T]) => pathname.match(K)?.[0] && T)
+    .filter(x => x)
+    .at(0);
 
   return (
     <App theme='material' className="safe-areas">
@@ -88,7 +100,7 @@ export default function AppLayout({
             >
               <Stack sx={{ mt: 8 }}>
                 <Navbar
-                  title={pathname}
+                  title={title}
                   className="top-0 fixed"
                   left={
                     <IconButton aria-label="open toolbar" onClick={handleDrawerToggle}>
