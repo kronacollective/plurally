@@ -13,10 +13,13 @@ import { useImmer } from "use-immer";
 import { DRAWER_WIDTH } from "@/lib/globals";
 import MainMemberDisplay from "./tabs/Main";
 import SettingsMemberDisplay from "./tabs/Settings";
+import { CalendarIcon } from "@mui/x-date-pickers";
+import HistoryMemberDisplay from "./tabs/History";
 
 const TAB_COMPONENTS = {
   main: MainMemberDisplay,
   settings: SettingsMemberDisplay,
+  history: HistoryMemberDisplay,
 }
 
 export default function MemberDisplay({
@@ -90,6 +93,12 @@ export default function MemberDisplay({
             onClick={() => setActiveTab('main')}
             icon={<Person/>}
             label="Main"
+          />
+          <TabbarLink
+            active={active_tab === 'history'}
+            onClick={() => setActiveTab('history')}
+            icon={<CalendarIcon/>}
+            label="History"
           />
           <TabbarLink
             active={active_tab === 'settings'}

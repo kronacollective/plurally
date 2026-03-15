@@ -1,0 +1,62 @@
+import { useShortQuery } from "@/lib/hooks/useShortQuery";
+import { useSupabase } from "@/lib/supabase/client";
+import { Tables } from "@/lib/supabase/database.types";
+import { List, ListItem, ListItemText } from "@mui/material";
+import { compareDesc, format, formatDuration, interval, intervalToDuration } from "date-fns";
+import { useMemo } from "react";
+import { Updater } from "use-immer";
+
+export default function HistoryMemberDisplay({
+  member,
+  member_mutations,
+  member_state,
+  updateMemberState,
+}: {
+  member: Tables<'members'>
+  member_mutations: {
+    update: () => Promise<void>;
+    deleteMember: () => Promise<void>;
+  } & {
+    invalidateCache: () => Promise<void>;
+  },
+  member_state: Record<string, string | null>,
+  updateMemberState: Updater<Record<string, string | null>>,
+}) {
+  const supabase = useSupabase();
+
+  const { data: front_history } = useShortQuery(
+    ['fronts', member.id],
+    async () => {
+      const { data } = await supabase
+        .from('fronts')
+        .select('*, member ( * )')
+        .eq('member', member.id);
+      return data;
+    }
+  );
+
+  const sorted_history = useMemo(() => {
+    return front_history?.toSorted((fea, feb) => compareDesc(fea.start, feb.start)) ?? [];
+  }, [front_history]);
+
+  return (
+    <List sx={{ width: '90%' }}>
+      { sorted_history?.map(fe => {
+        return (
+          <ListItem key={fe.id}
+            style={{
+              backgroundColor: `rgba(${member.color ?? '255, 255, 255'}, 20%)`,
+              borderRadius: '10px',
+              marginBottom: 5,
+            }}
+          >
+            <ListItemText
+              primary={`${format(fe.start, 'do MMMM yyyy')} — ${fe.end ? format(fe.end, 'do MMMM yyyy') : 'Now'}`}
+              secondary={formatDuration(intervalToDuration(interval(fe.start, fe.end ?? new Date())))}
+            />
+          </ListItem>
+        )
+      }) }
+    </List>
+  )
+}
