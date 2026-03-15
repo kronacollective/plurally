@@ -1,7 +1,7 @@
 import { useShortQuery } from "@/lib/hooks/useShortQuery";
 import { useSupabase } from "@/lib/supabase/client";
 import { Tables } from "@/lib/supabase/database.types";
-import { List, ListItem, ListItemText } from "@mui/material";
+import { List, ListItem, ListItemText, Stack } from "@mui/material";
 import { compareDesc, format, formatDuration, interval, intervalToDuration } from "date-fns";
 import { useMemo } from "react";
 import { Updater } from "use-immer";
@@ -50,10 +50,26 @@ export default function HistoryMemberDisplay({
               marginBottom: 5,
             }}
           >
-            <ListItemText
-              primary={`${format(fe.start, 'do MMMM yyyy')} — ${fe.end ? format(fe.end, 'do MMMM yyyy') : 'Now'}`}
-              secondary={formatDuration(intervalToDuration(interval(fe.start, fe.end ?? new Date())))}
-            />
+            <Stack sx={{ width: '100%' }}>
+              <Stack direction="row" sx={{
+                width: '100%',
+                justifyContent: 'space-between'
+              }}>
+                <ListItemText
+                  primary={format(fe.start, 'dd/mm/yyyy')}
+                  secondary={format(fe.start, 'hh:mm:ss')}
+                />
+                {fe.end && (<ListItemText
+                  sx={{ textAlign: 'right' }}
+                  primary={format(fe.end, 'dd/mm/yyyy')}
+                  secondary={format(fe.end, 'hh:mm:ss')}
+                />)}
+              </Stack>
+              <ListItemText
+                primary={!fe.end && 'Active'}
+                secondary={formatDuration(intervalToDuration(interval(fe.start, fe.end ?? new Date())))}
+              />
+            </Stack>
           </ListItem>
         )
       }) }
