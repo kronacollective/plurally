@@ -3,17 +3,21 @@ import { Box, Drawer, IconButton, Stack, useMediaQuery, useTheme } from "@mui/ma
 import { App, Navbar, Page } from "konsta/react";
 import MenuDrawer from "../components/Drawer";
 import Menu from "@mui/icons-material/Menu";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { QueryProvider } from "../components/QueryProvider";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { DRAWER_WIDTH } from "@/lib/globals";
+import { useSupabase } from "@/lib/supabase/client";
+import { useRouter } from "next/navigation";
 
 const TITLES = {
   '^/app/members$': 'Members',
   '^/app/members/(.+)$': 'Member',
   '^/app/fronts$': 'Fronts',
+  '^/app/account$': 'Account',
+  '^/app/account/create$': 'Create an account',
 };
 
 export default function AppLayout({
@@ -21,10 +25,13 @@ export default function AppLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const supabase = useSupabase();
+
   const [ mobile_open, setMobileOpen ] = useState<boolean>(false);
   const [ is_closing, setIsClosing ] = useState<boolean>(false);
 
   const pathname = usePathname();
+  const router = useRouter();
 
   const theme = useTheme()
   const is_mobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -47,6 +54,22 @@ export default function AppLayout({
     .map(([K, T]) => pathname.match(K)?.[0] && T)
     .filter(x => x)
     .at(0);
+
+  useEffect(() => {
+    if (pathname === '/app/account/create') return;
+    const checkIfAccountExists = async () => {
+      const { data: user } = await supabase.auth.getUser();
+      const { data: account } = await supabase
+        .from('accounts')
+        .select()
+        .eq('user', user?.user?.id ?? '')
+        .single();
+      if (!account) {
+        router.push('/app/account/create');
+      }
+    };
+    checkIfAccountExists();
+  }, [pathname, router, supabase]);
 
   return (
     <App theme='material' className="safe-areas">
