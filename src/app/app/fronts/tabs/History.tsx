@@ -1,7 +1,7 @@
 import { List, ListItem, ListItemAvatar, ListItemText, Stack } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
-import { useState } from "react";
-import { formatDuration, interval, intervalToDuration, subDays } from "date-fns";
+import { useMemo, useState } from "react";
+import { compareDesc, formatDuration, interval, intervalToDuration, subDays } from "date-fns";
 import { useShortQuery } from "@/lib/hooks/useShortQuery";
 import { useSupabase } from "@/lib/supabase/client";
 import Image from "next/image";
@@ -30,6 +30,15 @@ export default function HistoryFronts() {
     }
   );
 
+  const sorted_fronts = useMemo(() => {
+    if (!fronts_in_range) return []
+    const active_fronts = fronts_in_range.filter(fir => !fir.end);
+    const inactive_fronts = fronts_in_range.filter(fir => fir.end);
+    const active_fronts_sorted = active_fronts.toSorted((afa, afb) => compareDesc(afa.start, afb.start));
+    const inactive_fronts_sorted = inactive_fronts.toSorted((ifa, ifb) => compareDesc(ifa.start, ifb.start));
+    return [ ...active_fronts_sorted, ...inactive_fronts_sorted ];
+  }, [fronts_in_range]);
+
   return (
     <Stack gap={2}>
       <DatePicker
@@ -45,7 +54,7 @@ export default function HistoryFronts() {
         onChange={nv => setEndDate(nv)}
       />
       <List>
-        {fronts_in_range?.map(fir => {
+        {sorted_fronts?.map(fir => {
           const front_interval = interval(fir.start, fir.end ?? new Date());
           const front_duration = intervalToDuration(front_interval);
           const front_duration_label = formatDuration(front_duration);
