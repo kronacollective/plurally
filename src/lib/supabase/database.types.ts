@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      accounts: {
+        Row: {
+          color: string | null
+          created_at: string
+          description: string | null
+          display_name: string | null
+          id: string
+          user: string
+          username: string
+        }
+        Insert: {
+          color?: string | null
+          created_at?: string
+          description?: string | null
+          display_name?: string | null
+          id?: string
+          user: string
+          username: string
+        }
+        Update: {
+          color?: string | null
+          created_at?: string
+          description?: string | null
+          display_name?: string | null
+          id?: string
+          user?: string
+          username?: string
+        }
+        Relationships: []
+      }
       fronts: {
         Row: {
           end: string | null
