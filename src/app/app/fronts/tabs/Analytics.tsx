@@ -4,10 +4,14 @@ import { subDays } from "date-fns";
 import { useState } from "react";
 import AnalyticsTotals from "./tabs/Totals";
 import AnalyticsCount from "./tabs/Count";
+import AnalyticsMax from "./tabs/Max";
+import AnalyticsMin from "./tabs/Min";
 
 const SUBTAB_COMPONENTS = {
   total: AnalyticsTotals,
   count: AnalyticsCount,
+  max: AnalyticsMax,
+  min: AnalyticsMin,
 }
 
 export default function AnalyticsFronts() {
