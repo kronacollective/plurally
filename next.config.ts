@@ -6,6 +6,15 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       new URL('https://file.garden/**')
     ]
+  },
+  async redirects() {
+    return [
+      {
+        source: '/',
+        destination: '/app',
+        permanent: true,
+      }
+    ]
   }
 };
 
