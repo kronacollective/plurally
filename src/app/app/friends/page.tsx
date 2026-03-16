@@ -1,10 +1,11 @@
 'use client';
 import { useShortMutations, useShortQuery } from "@/lib/hooks/useShortQuery";
 import { useSupabase } from "@/lib/supabase/client";
+import { Tables } from "@/lib/supabase/database.types";
 import { Add, Check, Clear } from "@mui/icons-material";
 import { IconButton, List, ListItem, ListItemText, Stack, TextField } from "@mui/material";
 import { Button } from "konsta/react";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 type FriendshipMutators = {
   acceptIncomingRequest: (relating_id: string, related_id: string) => Promise<void>,
@@ -14,7 +15,9 @@ type FriendshipMutators = {
 
 export default function Friends() {
   const supabase = useSupabase();
+
   const [ username, setUsername ] = useState('');
+  const [ friends_fronters, setFriendsFronters ] = useState<Record<string, string[]>>({});
 
   const { data: account } = useShortQuery(
     ['account'],
@@ -61,6 +64,34 @@ export default function Friends() {
   const friends = useMemo(() => {
     return friends_and_requests?.filter(far => far.accepted) ?? [];
   }, [friends_and_requests]);
+
+  const friend_list = useMemo(() => {
+    return friends.map(friend => friend.relating.id === account!.id ? friend.related.id : friend.relating.id);
+  }, [account, friends]);
+
+  useEffect(() => {
+    const getFriendFronters = async () => {
+      const fronters_entries = await Promise.all(friend_list.map(async (friend_id) => {
+        const { data: active_fronts } = await supabase
+          .from('fronts')
+          .select()
+          .eq('account', friend_id)
+          .is('end', null);
+        const active_fronter_ids = active_fronts!.map(af => af.member);
+        const active_fronters = await Promise.all(active_fronter_ids.map(async (afid) => {
+          const { data: member } = await supabase
+            .from('members')
+            .select('name')
+            .eq('id', afid)
+            .single();
+          return member!.name;
+        }));
+        return [friend_id, active_fronters];
+      }));
+      setFriendsFronters(Object.fromEntries(fronters_entries));
+    };
+    getFriendFronters();
+  }, [friend_list, supabase]);
 
   // @ts-expect-error Wrong inference in mutators
   const friendship_mutators = useShortMutations<FriendshipMutators>(
@@ -182,12 +213,14 @@ export default function Friends() {
                 marginBottom: 5,
               }}
             >
-              {are_we_relating 
+              {are_we_relating
                 ? (<ListItemText
                     primary={`${friendship.related.display_name} (${friendship.related.username})`}
+                    secondary={friends_fronters[friendship.related.id].join(', ')}
                   />)
                 : (<ListItemText
                     primary={`${friendship.relating.display_name} (${friendship.relating.username})`}
+                    secondary={friends_fronters[friendship.relating.id].join(', ')}
                   />)
               }
             </ListItem>
