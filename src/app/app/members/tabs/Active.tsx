@@ -1,11 +1,19 @@
-import { useShortQuery } from "@/lib/hooks/useShortQuery";
+import { useShortMutations, useShortQuery } from "@/lib/hooks/useShortQuery";
 import { useSupabase } from "@/lib/supabase/client";
-import { List, ListItem, ListItemAvatar, ListItemText } from "@mui/material";
-import { Block, BlockTitle } from 'konsta/react';
+import { List, ListItem, ListItemAvatar, ListItemText, Stack, TextField } from "@mui/material";
+import { Block, BlockTitle, Button } from 'konsta/react';
 import Image from "next/image";
+import { useEffect } from "react";
+import { useImmer } from "use-immer";
+
+type FrontMutations = {
+  update: (member_id: string) => Promise<void>,
+};
 
 export default function FrontsActive () {
   const supabase = useSupabase();
+
+  const [ comments, updateComments ] = useImmer<Record<string, string>>({});
 
   const { data: account } = useShortQuery(
     ["account"],
@@ -32,6 +40,24 @@ export default function FrontsActive () {
       return data;
     },
     [ account ],
+  );
+
+  useEffect(() => {
+    if (!active_fronts) return;
+    active_fronts.forEach(af => updateComments(draft => { draft[af.member.id] = af.message ?? '' }))
+  }, [active_fronts]);
+
+  // @ts-expect-error Bad still
+  const front_mutators = useShortMutations<FrontMutations>(
+    ["fronts"],
+    {
+      update: async (member_id: string) => {
+        await supabase
+          .from('fronts')
+          .update({ message: comments[member_id] })
+          .eq('member', member_id);
+      }
+    }
   );
 
   return (
@@ -66,6 +92,20 @@ export default function FrontsActive () {
                   secondary={af.member.pronouns}
                 >
                 </ListItemText>
+                <Stack direction="row" gap={2}>
+                  <TextField
+                    label="Comment"
+                    variant="outlined"
+                    value={comments[af.member.id]}
+                    onChange={ev => updateComments(draft => { draft[af.member.id] = ev.target.value })}
+                  />
+                  <Button
+                    style={{ height: '4em', width: '4em' }}
+                    onClick={() => front_mutators.update(af.member.id)}
+                  >
+                    Save
+                  </Button>
+                </Stack>
               </ListItem>
             )
           }) }
