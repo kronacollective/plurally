@@ -1,8 +1,9 @@
-import { List, ListItem, ListItemAvatar, ListItemText } from "@mui/material"
+import { List, ListItem, ListItemAvatar, ListItemButton, ListItemText } from "@mui/material"
 import Image from "next/image"
 import { getFriendMembers } from "../actions";
 import { useSupabase } from "@/lib/supabase/client";
 import { useShortQuery } from "@/lib/hooks/useShortQuery";
+import { useRouter } from "next/navigation";
 
 export default function FriendMembers({
   friend_id
@@ -10,6 +11,7 @@ export default function FriendMembers({
   friend_id: string,
 }) {
   const supabase = useSupabase();
+  const router = useRouter();
 
   const { data: account } = useShortQuery(
     ['account'],
@@ -45,24 +47,28 @@ export default function FriendMembers({
                 marginBottom: 5,
               }}
             >
-              <ListItemAvatar sx={{ mr: 2 }}>
-                { member && member.avatar ? (
-                  <Image
-                    className="rounded-full"
-                    src={member.avatar}
-                    width={60}
-                    height={60}
-                    alt="Profile picture"
-                  />
-                ) : (
-                  "?"
-                )}
-              </ListItemAvatar>
-              <ListItemText
-                primary={member.name}
-                secondary={member.pronouns}
+              <ListItemButton
+                onClick={() => router.push(`/app/friends/${friend_id}/${member.id}`)}
               >
-              </ListItemText>
+                <ListItemAvatar sx={{ mr: 2 }}>
+                  { member && member.avatar ? (
+                    <Image
+                      className="rounded-full"
+                      src={member.avatar}
+                      width={60}
+                      height={60}
+                      alt="Profile picture"
+                    />
+                  ) : (
+                    "?"
+                  )}
+                </ListItemAvatar>
+                <ListItemText
+                  primary={member.name}
+                  secondary={member.pronouns}
+                >
+                </ListItemText>
+              </ListItemButton>
             </ListItem>
           )
         }) }
