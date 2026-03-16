@@ -94,6 +94,7 @@ export default function Members() {
           .from('fronts')
           .insert({
             member: member_id,
+            account: account!.id,
           });
         if (error) console.error(error);
       },

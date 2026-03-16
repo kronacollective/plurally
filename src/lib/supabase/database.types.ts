@@ -79,6 +79,7 @@ export type Database = {
       }
       fronts: {
         Row: {
+          account: string | null
           end: string | null
           id: number
           member: string
@@ -86,6 +87,7 @@ export type Database = {
           start: string
         }
         Insert: {
+          account?: string | null
           end?: string | null
           id?: number
           member: string
@@ -93,6 +95,7 @@ export type Database = {
           start?: string
         }
         Update: {
+          account?: string | null
           end?: string | null
           id?: number
           member?: string
@@ -100,6 +103,13 @@ export type Database = {
           start?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "fronts_account_fkey"
+            columns: ["account"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "fronts_member_fkey"
             columns: ["member"]
