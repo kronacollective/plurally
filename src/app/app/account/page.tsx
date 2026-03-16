@@ -23,7 +23,12 @@ export default function Account() {
     },
   );
 
-  const [ account_data, updateAccountData ] = useImmer<Record<string, string | null>>({});
+  const [ account_data, updateAccountData ] = useImmer<Record<string, string | null>>({
+    username: '',
+    display_name: '',
+    description: '',
+    color: '',
+  });
 
   useEffect(() => {
     if (!account) return;
