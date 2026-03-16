@@ -44,6 +44,36 @@ export type Database = {
         }
         Relationships: []
       }
+      bucket_friends: {
+        Row: {
+          account: string
+          bucket: string
+        }
+        Insert: {
+          account: string
+          bucket: string
+        }
+        Update: {
+          account?: string
+          bucket?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bucket_friends_account_fkey"
+            columns: ["account"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bucket_friends_bucket_fkey"
+            columns: ["bucket"]
+            isOneToOne: false
+            referencedRelation: "buckets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       bucket_members: {
         Row: {
           bucket: string

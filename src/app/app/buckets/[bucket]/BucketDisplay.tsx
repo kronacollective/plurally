@@ -10,9 +10,11 @@ import { useEffect, useState } from "react";
 import { useImmer } from "use-immer";
 import BucketSettings from "./tabs/Settings";
 import BucketMembers from "./tabs/Members";
+import BucketFriends from "./tabs/Friends";
 
 const TAB_COMPONENTS = {
   members: BucketMembers,
+  friends: BucketFriends,
   settings: BucketSettings,
 }
 
