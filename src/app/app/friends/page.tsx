@@ -216,11 +216,11 @@ export default function Friends() {
               {are_we_relating
                 ? (<ListItemText
                     primary={`${friendship.related.display_name} (${friendship.related.username})`}
-                    secondary={friends_fronters[friendship.related.id].join(', ')}
+                    secondary={friends_fronters[friendship.related.id]?.join(', ')}
                   />)
                 : (<ListItemText
                     primary={`${friendship.relating.display_name} (${friendship.relating.username})`}
-                    secondary={friends_fronters[friendship.relating.id].join(', ')}
+                    secondary={friends_fronters[friendship.relating.id]?.join(', ')}
                   />)
               }
             </ListItem>
