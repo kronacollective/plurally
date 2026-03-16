@@ -30,10 +30,16 @@ export default function Members() {
   const theme = useTheme()
   const is_mobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-  const { data: user } = useShortQuery(
-    ["user"],
+  const { data: account } = useShortQuery(
+    ["account"],
     async () => {
-      return (await supabase.auth.getUser()).data;
+      const { data: user } = await supabase.auth.getUser();
+      const { data: account } = await supabase
+        .from('accounts')
+        .select()
+        .eq('user', user.user!.id)
+        .single();
+      return account;
     },
   );
 
@@ -43,10 +49,10 @@ export default function Members() {
       const { data } = await supabase
         .from('members')
         .select()
-        .eq('user', user?.user?.id ?? '');
+        .eq('account', account!.id);
       return data;
     },
-    [ user ],
+    [ account ],
   );
 
   const member_mutations = useShortMutations(
@@ -57,7 +63,7 @@ export default function Members() {
           .from('members')
           .insert({
             id: nanoid(),
-            user: user?.user?.id,
+            account: account!.id,
             ...sheet_form,
             color: '255, 255, 255',
           });
