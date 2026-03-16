@@ -6,6 +6,7 @@ import { Add, Check, Clear } from "@mui/icons-material";
 import { IconButton, List, ListItem, ListItemText, Stack, TextField } from "@mui/material";
 import { Button } from "konsta/react";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { getFriendFronters } from "./actions";
 
 type FriendshipMutators = {
   acceptIncomingRequest: (relating_id: string, related_id: string) => Promise<void>,
@@ -70,28 +71,12 @@ export default function Friends() {
   }, [account, friends]);
 
   useEffect(() => {
-    const getFriendFronters = async () => {
-      const fronters_entries = await Promise.all(friend_list.map(async (friend_id) => {
-        const { data: active_fronts } = await supabase
-          .from('fronts')
-          .select()
-          .eq('account', friend_id)
-          .is('end', null);
-        const active_fronter_ids = active_fronts!.map(af => af.member);
-        const active_fronters = await Promise.all(active_fronter_ids.map(async (afid) => {
-          const { data: member } = await supabase
-            .from('members')
-            .select('name')
-            .eq('id', afid)
-            .single();
-          return member!.name;
-        }));
-        return [friend_id, active_fronters];
-      }));
-      setFriendsFronters(Object.fromEntries(fronters_entries));
+    const getFriendFrontersFromServer = async () => {
+      const fronters = await getFriendFronters(account!.id, friend_list);
+      setFriendsFronters(fronters);
     };
-    getFriendFronters();
-  }, [friend_list, supabase]);
+    getFriendFrontersFromServer();
+  }, [account, friend_list, supabase]);
 
   // @ts-expect-error Wrong inference in mutators
   const friendship_mutators = useShortMutations<FriendshipMutators>(
