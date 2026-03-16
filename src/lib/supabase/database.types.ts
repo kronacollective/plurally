@@ -219,6 +219,7 @@ export type Database = {
           created_at: string
           description: string | null
           id: string
+          is_status: boolean
           name: string | null
           pronouns: string | null
         }
@@ -229,6 +230,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           id: string
+          is_status?: boolean
           name?: string | null
           pronouns?: string | null
         }
@@ -239,6 +241,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
+          is_status?: boolean
           name?: string | null
           pronouns?: string | null
         }

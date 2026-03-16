@@ -47,7 +47,8 @@ export default function MemberList() {
       const { data } = await supabase
         .from('members')
         .select()
-        .eq('account', account!.id);
+        .eq('account', account!.id)
+        .eq('is_status', false);
       return data;
     },
     [ account ],

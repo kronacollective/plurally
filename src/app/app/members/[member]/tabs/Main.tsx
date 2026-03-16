@@ -87,7 +87,7 @@ export default function MainMemberDisplay({
           onChange={ev => updateMemberState(draft => { draft.name = ev.target.value })}
           sx={{ width: '90%' }}
         />
-        <TextField
+        {!member.is_status && <TextField
           name="pronouns"
           label="Pronouns"
           variant="outlined"
@@ -95,7 +95,7 @@ export default function MainMemberDisplay({
           value={member_state.pronouns}
           onChange={ev => updateMemberState(draft => { draft.pronouns = ev.target.value })}
           sx={{ width: '90%' }}
-        />
+        />}
         <TextField multiline
           name="description"
           label="Description"

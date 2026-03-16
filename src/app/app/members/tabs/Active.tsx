@@ -33,7 +33,7 @@ export default function FrontsActive () {
     async () => {
       const { data, error } = await supabase
         .from('fronts')
-        .select('*, member ( * )')
+        .select('*, member( * )')
         .eq('account', account!.id)
         .is('end', null);
       if (error) console.error('active_fronts', error);
@@ -45,7 +45,7 @@ export default function FrontsActive () {
   useEffect(() => {
     if (!active_fronts) return;
     active_fronts.forEach(af => updateComments(draft => { draft[af.member.id] = af.message ?? '' }))
-  }, [active_fronts]);
+  }, [active_fronts, updateComments]);
 
   // @ts-expect-error Bad still
   const front_mutators = useShortMutations<FrontMutations>(
@@ -66,6 +66,7 @@ export default function FrontsActive () {
         <BlockTitle style={{ marginBottom: 1 }}>Active fronters and statuses</BlockTitle>
         <List>
           { active_fronts?.map(af => {
+            console.log('af', af);
             return (
               <ListItem key={af.id}
                 style={{

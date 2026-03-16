@@ -29,7 +29,7 @@ export default function SettingsMemberDisplay({
           router.push('/app/members');
         }}
       >
-        Delete member
+        Delete
       </Button>
     </div>
   )
