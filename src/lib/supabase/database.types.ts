@@ -44,6 +44,68 @@ export type Database = {
         }
         Relationships: []
       }
+      bucket_members: {
+        Row: {
+          bucket: string
+          member: string
+        }
+        Insert: {
+          bucket: string
+          member: string
+        }
+        Update: {
+          bucket?: string
+          member?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bucket_members_bucket_fkey"
+            columns: ["bucket"]
+            isOneToOne: false
+            referencedRelation: "buckets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bucket_members_member_fkey"
+            columns: ["member"]
+            isOneToOne: false
+            referencedRelation: "members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      buckets: {
+        Row: {
+          account: string
+          color: string | null
+          description: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          account: string
+          color?: string | null
+          description?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          account?: string
+          color?: string | null
+          description?: string | null
+          id?: string
+          name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "buckets_account_fkey"
+            columns: ["account"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       friends: {
         Row: {
           accepted: boolean

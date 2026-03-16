@@ -24,7 +24,7 @@ export default function Members() {
   const [ sheet_form, updateSheetForm ] = useImmer({
     name: '',
     pronouns: '',
-    description: ''
+    description: '',
   });
 
   const theme = useTheme()
