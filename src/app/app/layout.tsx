@@ -16,6 +16,7 @@ const TITLES = {
   '^/app/members$': 'Members',
   '^/app/members/(.+)$': 'Member',
   '^/app/fronts$': 'Fronts',
+  '^/app/buckets$': 'Privacy buckets',
   '^/app/account$': 'Account',
   '^/app/account/create$': 'Create an account',
 };
