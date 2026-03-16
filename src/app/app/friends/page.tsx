@@ -3,10 +3,11 @@ import { useShortMutations, useShortQuery } from "@/lib/hooks/useShortQuery";
 import { useSupabase } from "@/lib/supabase/client";
 import { Tables } from "@/lib/supabase/database.types";
 import { Add, Check, Clear } from "@mui/icons-material";
-import { IconButton, List, ListItem, ListItemText, Stack, TextField } from "@mui/material";
+import { IconButton, List, ListItem, ListItemButton, ListItemText, Stack, TextField } from "@mui/material";
 import { Button } from "konsta/react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { getFriendFronters } from "./actions";
+import { useRouter } from "next/navigation";
 
 type FriendshipMutators = {
   acceptIncomingRequest: (relating_id: string, related_id: string) => Promise<void>,
@@ -16,6 +17,7 @@ type FriendshipMutators = {
 
 export default function Friends() {
   const supabase = useSupabase();
+  const router = useRouter();
 
   const [ username, setUsername ] = useState('');
   const [ friends_fronters, setFriendsFronters ] = useState<Record<string, string[]>>({});
@@ -198,16 +200,20 @@ export default function Friends() {
                 marginBottom: 5,
               }}
             >
-              {are_we_relating
-                ? (<ListItemText
-                    primary={`${friendship.related.display_name} (${friendship.related.username})`}
-                    secondary={friends_fronters[friendship.related.id]?.join(', ')}
-                  />)
-                : (<ListItemText
-                    primary={`${friendship.relating.display_name} (${friendship.relating.username})`}
-                    secondary={friends_fronters[friendship.relating.id]?.join(', ')}
-                  />)
-              }
+              <ListItemButton
+                onClick={() => router.push(`/app/friends/${are_we_relating ? friendship.related.id : friendship.relating.id}`)}
+              >
+                {are_we_relating
+                  ? (<ListItemText
+                      primary={`${friendship.related.display_name} (${friendship.related.username})`}
+                      secondary={friends_fronters[friendship.related.id]?.join(', ')}
+                    />)
+                  : (<ListItemText
+                      primary={`${friendship.relating.display_name} (${friendship.relating.username})`}
+                      secondary={friends_fronters[friendship.relating.id]?.join(', ')}
+                    />)
+                }
+              </ListItemButton>
             </ListItem>
           );
         })}
