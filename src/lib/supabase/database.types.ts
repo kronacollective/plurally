@@ -44,6 +44,39 @@ export type Database = {
         }
         Relationships: []
       }
+      friends: {
+        Row: {
+          accepted: boolean
+          related: string
+          relating: string
+        }
+        Insert: {
+          accepted: boolean
+          related: string
+          relating: string
+        }
+        Update: {
+          accepted?: boolean
+          related?: string
+          relating?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "friends_related_fkey"
+            columns: ["related"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "friends_relating_fkey"
+            columns: ["relating"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       fronts: {
         Row: {
           end: string | null
@@ -78,6 +111,7 @@ export type Database = {
       }
       members: {
         Row: {
+          account: string | null
           avatar: string | null
           color: string
           created_at: string
@@ -85,9 +119,9 @@ export type Database = {
           id: string
           name: string | null
           pronouns: string | null
-          user: string | null
         }
         Insert: {
+          account?: string | null
           avatar?: string | null
           color?: string
           created_at?: string
@@ -95,9 +129,9 @@ export type Database = {
           id: string
           name?: string | null
           pronouns?: string | null
-          user?: string | null
         }
         Update: {
+          account?: string | null
           avatar?: string | null
           color?: string
           created_at?: string
@@ -105,9 +139,16 @@ export type Database = {
           id?: string
           name?: string | null
           pronouns?: string | null
-          user?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "members_account_fkey"
+            columns: ["account"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
