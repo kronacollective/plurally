@@ -112,7 +112,7 @@ export default function PrivacyBuckets() {
       </Sheet>
       <Button
         onClick={() => setSheetOpened(true)}
-        style={{ width: '90%', marginTop: 5 }}
+        style={{ width: '90%', marginTop: 10 }}
       >
         <Add/> Create bucket
       </Button>

@@ -1,74 +1,55 @@
 'use client';
 
-import { useShortQuery } from "@/lib/hooks/useShortQuery";
-import { useSupabase } from "@/lib/supabase/client";
-import { List, ListItem, ListItemAvatar, ListItemText } from "@mui/material";
-import Image from "next/image";
-import { getFriendMembers } from "./actions";
+import { Tabbar, TabbarLink, ToolbarPane } from "konsta/react";
+import { Info, People } from "@mui/icons-material";
+import { useState } from "react";
+import { DRAWER_WIDTH } from "@/lib/globals";
+import FriendMembers from "./tabs/Members";
+import { useMediaQuery, useTheme } from "@mui/material";
+import FriendInformation from "./tabs/Information";
+
+const TAB_COMPONENTS = {
+  members: FriendMembers,
+  info: FriendInformation,
+};
 
 export default function FriendDisplay({
   friend_id
 }: {
   friend_id: string,
 }) {
-  const supabase = useSupabase();
+  const [ active_tab, setActiveTab ] = useState('members');
 
-  const { data: account } = useShortQuery(
-    ['account'],
-    async () => {
-      const { data: user } = await supabase.auth.getUser();
-      const { data } = await supabase
-        .from('accounts')
-        .select()
-        .eq('user', user.user!.id)
-        .single();
-      return data;
-    },
-  );
+  const theme = useTheme()
+  const is_mobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-  const { data: members } = useShortQuery(
-    ['friend', friend_id, 'members'],
-    async () => {
-      return getFriendMembers(account!.id, friend_id);
-    },
-    [ account ],
-  );
+  // @ts-expect-error Still bad
+  const Tab = TAB_COMPONENTS[active_tab];
 
   return (
-    <div style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <List sx={{ width: '90%' }}>
-        { members?.map(member => {
-          return (
-            <ListItem
-              key={member.id}
-              style={{
-                backgroundColor: `rgba(${member.color ?? '255, 255, 255'}, 20%)`,
-                borderRadius: '10px',
-                marginBottom: 5,
-              }}
-            >
-              <ListItemAvatar sx={{ mr: 2 }}>
-                { member && member.avatar ? (
-                  <Image
-                    className="rounded-full"
-                    src={member.avatar}
-                    width={60}
-                    height={60}
-                    alt="Profile picture"
-                  />
-                ) : (
-                  "?"
-                )}
-              </ListItemAvatar>
-              <ListItemText
-                primary={member.name}
-                secondary={member.pronouns}
-              >
-              </ListItemText>
-            </ListItem>
-          )
-        }) }
-      </List>
-    </div>
+    <>
+      <Tab
+        friend_id={friend_id}
+      />
+      <Tabbar
+        className="right-0 bottom-0 fixed"
+        style={{ left: is_mobile ? '0' : DRAWER_WIDTH, width: is_mobile ? '100%' : `calc(100% - ${DRAWER_WIDTH}px)` }}
+      >
+        <ToolbarPane>
+          <TabbarLink
+            active={active_tab === 'members'}
+            onClick={() => setActiveTab('members')}
+            icon={<People/>}
+            label="Members"
+          />
+          <TabbarLink
+            active={active_tab === 'info'}
+            onClick={() => setActiveTab('info')}
+            icon={<Info/>}
+            label="Information"
+          />
+        </ToolbarPane>
+      </Tabbar>
+    </>
   )
 }
