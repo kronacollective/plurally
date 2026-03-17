@@ -15,22 +15,44 @@ export default function AnalyticsCount({
 }) {
   const supabase = useSupabase();
 
+  const { data: account } = useShortQuery(
+    ['account'],
+    async () => {
+      // Find our account ID
+      const { data: user } = await supabase.auth.getUser();
+      const { data: account, error: account_error } = await supabase
+        .from('accounts')
+        .select('id')
+        .eq('user', user.user!.id)
+        .single();
+      if (account_error || !account) {
+        console.error("Couldn't find self account");
+        return;
+      }
+      return account;
+    },
+  );
+
   const { data: fronts_in_range } = useShortQuery(
     ['fronts', 'range'],
     async () => {
+      if (!account) return [];
       const { data: inactive_fronts } = await supabase
         .from('fronts')
         .select('*, member ( * )')
+        .eq('account', account.id)
         .gte('end', start_date.toISOString())
         .lte('start', end_date.toISOString());
       const { data: active_fronts } = await supabase
         .from('fronts')
         .select('*, member ( * )')
+        .eq('account', account.id)
         .lte('start', end_date.toISOString())
         .is('end', null);
       const data = [ ...active_fronts!, ...inactive_fronts! ];
       return data;
-    }
+    },
+    [ account ],
   );
 
   const clamped_fronts = useMemo(() => {
