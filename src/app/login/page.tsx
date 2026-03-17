@@ -24,6 +24,10 @@ export default function Login() {
   const signInWithDiscord = useCallback(async () => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'discord',
+      options: {
+        redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
+        // redirectTo: `http://localhost:3001/auth/callback`,
+      },
     });
     if (error) {
       setErrorToastContent('Could not log in with Discord: ' + error.message)
