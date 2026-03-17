@@ -50,7 +50,7 @@ export default function MemberDisplay({
   useEffect(() => {
     if (!member) return;
     updateMemberState(draft => {
-      Object.entries(member!).forEach(entry => draft[entry[0]] = entry[1])
+      Object.entries(member!).forEach(entry => draft[entry[0]] = String(entry[1]))
     });
   }, [member, updateMemberState]);
 
