@@ -1,15 +1,14 @@
 'use client';
 import { useSupabase } from "@/lib/supabase/client";
-import { X } from "@mui/icons-material";
+import { Close } from "@mui/icons-material";
 import { Container, IconButton, Stack, Typography } from "@mui/material";
 import { App, Button, Page, Toast } from "konsta/react";
-import { useRouter, redirect, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from "react";
 
 export default function Login() {
   const supabase = useSupabase();
   const router = useRouter()
-  const search_params = useSearchParams();
   const [ error_toast_opened, setErrorToastOpened ] = useState(false);
   const [ error_toast_content, setErrorToastContent ] = useState('');
 
@@ -20,10 +19,10 @@ export default function Login() {
       }
     }
     checkLoggedIn();
-  }, [router, search_params, supabase]);
+  }, [router, supabase]);
 
   const signInWithDiscord = useCallback(async () => {
-    const { data, error } = await supabase.auth.signInWithOAuth({
+    const { error } = await supabase.auth.signInWithOAuth({
       provider: 'discord',
     });
     if (error) {
@@ -48,7 +47,7 @@ export default function Login() {
           opened={error_toast_opened}
           button={
             <IconButton onClick={() => setErrorToastOpened(false)}>
-              <X/>
+              <Close/>
             </IconButton>
           }
         >
