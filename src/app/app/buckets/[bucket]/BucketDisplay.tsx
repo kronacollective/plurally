@@ -3,7 +3,7 @@
 import { DRAWER_WIDTH } from "@/lib/globals";
 import { useShortMutations, useShortQuery } from "@/lib/hooks/useShortQuery";
 import { useSupabase } from "@/lib/supabase/client";
-import { Diversity2, People, Settings } from "@mui/icons-material";
+import { Diversity2, People, Settings, TextFields } from "@mui/icons-material";
 import { useMediaQuery, useTheme } from "@mui/material";
 import { Tabbar, TabbarLink, ToolbarPane } from "konsta/react";
 import { useEffect, useState } from "react";
@@ -11,10 +11,12 @@ import { useImmer } from "use-immer";
 import BucketSettings from "./tabs/Settings";
 import BucketMembers from "./tabs/Members";
 import BucketFriends from "./tabs/Friends";
+import BucketFields from "./tabs/Fields";
 
 const TAB_COMPONENTS = {
   members: BucketMembers,
   friends: BucketFriends,
+  fields: BucketFields,
   settings: BucketSettings,
 }
 
@@ -106,6 +108,12 @@ export default function BucketDisplay({
             onClick={() => setActiveTab('friends')}
             icon={<Diversity2/>}
             label="Friends"
+          />
+          <TabbarLink
+            active={active_tab === 'fields'}
+            onClick={() => setActiveTab('fields')}
+            icon={<TextFields/>}
+            label="Fields"
           />
           <TabbarLink
             active={active_tab === 'settings'}
