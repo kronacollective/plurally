@@ -136,6 +136,35 @@ export type Database = {
           },
         ]
       }
+      fields: {
+        Row: {
+          account: string
+          id: string
+          name: string
+          type: string
+        }
+        Insert: {
+          account: string
+          id?: string
+          name: string
+          type?: string
+        }
+        Update: {
+          account?: string
+          id?: string
+          name?: string
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fields_account_fkey"
+            columns: ["account"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       friends: {
         Row: {
           accepted: boolean

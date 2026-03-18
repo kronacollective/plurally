@@ -3,7 +3,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import React from "react";
 import { Divider } from "@mui/material";
 import { useSupabase } from "@/lib/supabase/client";
-import { CoPresent, Dataset, Diversity2, Group, Logout, Timelapse } from "@mui/icons-material";
+import { CoPresent, Dataset, Diversity2, Group, Logout, TextFields, Timelapse } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
 
 export default function MenuDrawer({
@@ -33,6 +33,12 @@ export default function MenuDrawer({
           active={page === '/app/buckets'}
           onClick={() => router.push('/app/buckets')}
           media={<Dataset/>}
+        />
+        <MenuListItem
+          title="Custom fields"
+          active={page === '/app/fields'}
+          onClick={() => router.push('/app/fields')}
+          media={<TextFields/>}
         />
         <MenuListItem
           title="Friends"
