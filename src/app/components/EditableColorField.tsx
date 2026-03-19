@@ -50,7 +50,7 @@ export default function EditableColorField({
           />
         </Stack>
       )}
-      <Button
+      <Button clear
         onClick={toggleEditing}
         style={{ width: '4em', height: '4em' }}
       >

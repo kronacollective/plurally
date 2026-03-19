@@ -41,7 +41,7 @@ export default function EditableMarkdownField({
           <MuiMarkdown>{value}</MuiMarkdown>
         </Stack>
       )}
-      <Button
+      <Button clear
         onClick={toggleEditing}
         style={{ width: '4em', height: '4em' }}
       >
