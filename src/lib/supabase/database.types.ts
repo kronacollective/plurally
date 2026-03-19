@@ -166,6 +166,39 @@ export type Database = {
           },
         ]
       }
+      field_values: {
+        Row: {
+          field: string
+          member: string
+          value: Json | null
+        }
+        Insert: {
+          field?: string
+          member: string
+          value?: Json | null
+        }
+        Update: {
+          field?: string
+          member?: string
+          value?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "field_values_field_fkey"
+            columns: ["field"]
+            isOneToOne: false
+            referencedRelation: "fields"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "field_values_member_fkey"
+            columns: ["member"]
+            isOneToOne: false
+            referencedRelation: "members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       fields: {
         Row: {
           account: string

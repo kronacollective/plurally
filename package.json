@@ -21,6 +21,7 @@
     "immer": "^11.1.4",
     "konsta": "^5.0.7",
     "mui-color-input": "^7.0.0",
+    "mui-markdown": "^2.1.1",
     "nanoid": "^5.1.6",
     "next": "16.1.6",
     "react": "19.2.3",

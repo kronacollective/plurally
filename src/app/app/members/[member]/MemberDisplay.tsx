@@ -7,7 +7,7 @@ import { MuiColorInput } from "mui-color-input";
 import { useCallback, useEffect, useOptimistic, useState, useTransition } from "react";
 import { useSupabase } from "@/lib/supabase/client";
 import { Block, Fab, Link, Sheet, Tabbar, TabbarLink, Toolbar, ToolbarPane } from "konsta/react";
-import { Check, Close, Person, Save, Settings } from "@mui/icons-material";
+import { Check, Close, Person, Save, Settings, TextFields } from "@mui/icons-material";
 import { useShortMutations, useShortQuery } from "@/lib/hooks/useShortQuery";
 import { useImmer } from "use-immer";
 import { DRAWER_WIDTH } from "@/lib/globals";
@@ -15,11 +15,13 @@ import MainMemberDisplay from "./tabs/Main";
 import SettingsMemberDisplay from "./tabs/Settings";
 import { CalendarIcon } from "@mui/x-date-pickers";
 import HistoryMemberDisplay from "./tabs/History";
+import FieldsMemberDisplay from "./tabs/Fields";
 
 const TAB_COMPONENTS = {
   main: MainMemberDisplay,
   settings: SettingsMemberDisplay,
   history: HistoryMemberDisplay,
+  fields: FieldsMemberDisplay,
 }
 
 export default function MemberDisplay({
@@ -99,6 +101,12 @@ export default function MemberDisplay({
             onClick={() => setActiveTab('history')}
             icon={<CalendarIcon/>}
             label="History"
+          />
+          <TabbarLink
+            active={active_tab === 'fields'}
+            onClick={() => setActiveTab('fields')}
+            icon={<TextFields/>}
+            label="Fields"
           />
           <TabbarLink
             active={active_tab === 'settings'}

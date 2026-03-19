@@ -2,7 +2,7 @@
 
 import { useShortMutations, useShortQuery } from "@/lib/hooks/useShortQuery";
 import { useSupabase } from "@/lib/supabase/client";
-import { Add, Check, Close, Delete, TextFields } from "@mui/icons-material";
+import { Add, Alarm, CalendarMonth, Check, Close, Delete, Palette, TextFields } from "@mui/icons-material";
 import { IconButton, List, ListItem, ListItemText, MenuItem, Select, Stack, TextField, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { CalendarIcon } from "@mui/x-date-pickers";
 import { Block, Fab, Link, Sheet, Toolbar, ToolbarPane } from "konsta/react";
@@ -21,7 +21,6 @@ export default function Fields() {
   const [ sheet_opened, setSheetOpened ] = useState(false);
   const [ sheet_form, updateSheetForm ] = useImmer({
     name: '',
-    type: '',
   });
 
   const theme = useTheme()
@@ -80,7 +79,6 @@ export default function Fields() {
           .insert({
             account: account!.id,
             name: sheet_form.name,
-            type: sheet_form.type,
           })
       }
     }
@@ -110,7 +108,6 @@ export default function Fields() {
               field_mutators.create();
               updateSheetForm(draft => {
                 draft.name = '';
-                draft.type = '';
               })
               setSheetOpened(false);
             }}>
@@ -128,15 +125,6 @@ export default function Fields() {
               value={sheet_form.name}
               onChange={ev => updateSheetForm(draft => { draft.name = ev.target.value })}
             />
-            <Select
-              label="Type"
-              value={sheet_form.type}
-              sx={{ width: '100%' }}
-              onChange={ev => updateSheetForm(draft => { draft.type = ev.target.value as string })}
-            >
-              <MenuItem value="text"><TextFields/> Text</MenuItem>
-              <MenuItem value="date"><CalendarIcon /> Date</MenuItem>
-            </Select>
           </Stack>
         </Block>
       </Sheet>
@@ -161,6 +149,9 @@ export default function Fields() {
                     >
                       <MenuItem value="text"><TextFields/> Text</MenuItem>
                       <MenuItem value="date"><CalendarIcon /> Date</MenuItem>
+                      <MenuItem value="datetime"><Alarm /> Date and time</MenuItem>
+                      <MenuItem value="daymonth"><CalendarMonth /> Day and month</MenuItem>
+                      <MenuItem value="color"><Palette /> Color</MenuItem>
                     </Select>
                     <IconButton
                       color="error"
