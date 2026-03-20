@@ -52,7 +52,11 @@ export default function MemberDisplay({
   useEffect(() => {
     if (!member) return;
     updateMemberState(draft => {
-      Object.entries(member!).forEach(entry => draft[entry[0]] = String(entry[1]))
+      draft.avatar = member.avatar;
+      draft.name = member.name;
+      draft.description = member.description;
+      draft.pronouns = member.pronouns;
+      draft.color = member.color;
     });
   }, [member, updateMemberState]);
 
@@ -79,7 +83,7 @@ export default function MemberDisplay({
 
   return !member ? <></> : (
     <Stack gap={2} display="flex" sx={{ width: '100%', justifyContent: 'center', alignItems: 'center' }}>
-      <div className="mb-16">
+      <div className="mb-16" style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
         <Tab
           member={member}
           member_mutations={member_mutations}
