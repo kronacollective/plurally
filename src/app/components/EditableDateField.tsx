@@ -31,14 +31,20 @@ export default function EditableDateField({
   }, [editing, inner_state, onSave]);
 
   const formatted_value = useMemo(() => {
-    if (type === 'date') {
-      return format(inner_state, 'P');
-    } else if (type === 'datetime') {
-      return format(inner_state, 'Pp');
-    } else if (type === 'daymonth') {
-      return format(inner_state, 'dd/MM');
+    console.log('fv', inner_state);
+    // @ts-expect-error Check works despite type error
+    if (inner_state instanceof Date && !isNaN(inner_state)) {
+      if (type === 'date') {
+        return format(inner_state, 'P');
+      } else if (type === 'datetime') {
+        return format(inner_state, 'Pp');
+      } else if (type === 'daymonth') {
+        return format(inner_state, 'dd/MM');
+      } else {
+        return format(inner_state, 'PPpp');
+      }
     } else {
-      return format(inner_state, 'PPpp');
+      return 'Invalid date';
     }
   }, [inner_state, type]);
 
