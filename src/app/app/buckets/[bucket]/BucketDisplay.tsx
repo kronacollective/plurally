@@ -84,7 +84,7 @@ export default function BucketDisplay({
 
   return (
     <>
-      <div style={{ width: '100%', marginTop: 5 }}>
+      <div style={{ width: '100%', marginTop: 5, marginBottom: 64 }}>
         <Tab
           bucket={bucket}
           bucket_mutations={bucket_mutations}
