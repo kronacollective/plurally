@@ -3,7 +3,7 @@
 import { useShortMutations, useShortQuery } from "@/lib/hooks/useShortQuery";
 import { useSupabase } from "@/lib/supabase/client";
 import { Add, Alarm, CalendarMonth, Check, Close, Delete, Palette, TextFields } from "@mui/icons-material";
-import { IconButton, List, ListItem, ListItemText, MenuItem, Select, Stack, TextField, Typography, useMediaQuery, useTheme } from "@mui/material";
+import { IconButton, List, ListItem, ListItemText, MenuItem, Select, Stack, TextField, useMediaQuery, useTheme } from "@mui/material";
 import { CalendarIcon } from "@mui/x-date-pickers";
 import { Block, Fab, Link, Sheet, Toolbar, ToolbarPane } from "konsta/react";
 import { useState } from "react";
@@ -88,6 +88,7 @@ export default function Fields() {
     <>
       <Fab
         className="fixed right-safe-4 bottom-safe-4"
+        style={{ zIndex: 1500 }}
         icon={<Add/>}
         onClick={() => setSheetOpened(true)}
       />
