@@ -13,7 +13,7 @@ export default function EditableColorField({
   label: string,
   value: string,
   onSave?: (value: string) => Promise<void>,
-  readonly: boolean,
+  readonly?: boolean,
 }) {
   const [ editing, setEditing ] = useState(false);
   const [ inner_state, setInnerState ] = useState(value);

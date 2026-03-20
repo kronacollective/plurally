@@ -17,7 +17,7 @@ export default function EditableDateField({
   label: string,
   value: Json,
   onSave?: (iso_date: string) => Promise<void>,
-  readonly: boolean,
+  readonly?: boolean,
 }) {
   const [ editing, setEditing ] = useState(false);
   const [ inner_state, setInnerState ] = useState(parseJSON(JSON.stringify(value)));

@@ -1,5 +1,5 @@
 import { Edit, Save } from "@mui/icons-material";
-import { FormControl, InputAdornment, Stack, TextField, Typography } from "@mui/material";
+import { Stack, TextField, Typography } from "@mui/material";
 import { Button } from "konsta/react";
 import { useCallback, useState } from "react";
 import { MuiMarkdown } from 'mui-markdown';
@@ -13,7 +13,7 @@ export default function EditableMarkdownField({
   label: string,
   value: string,
   onSave?: (value: string) => Promise<void>,
-  readonly: boolean,
+  readonly?: boolean,
 }) {
   const [ editing, setEditing ] = useState(false);
   const [ inner_state, setInnerState ] = useState(value);
