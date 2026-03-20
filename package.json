@@ -43,5 +43,9 @@
     "supabase": "^2.77.0",
     "tailwindcss": "^4",
     "typescript": "^5"
+  },
+  "engines": {
+    "node": ">=23.x",
+    "npm": ">=11.x"
   }
 }
