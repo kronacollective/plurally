@@ -45,7 +45,7 @@
     "typescript": "^5"
   },
   "engines": {
-    "node": ">=23.x",
-    "npm": ">=11.x"
+    "node": "23.x",
+    "npm": "11.x"
   }
 }
