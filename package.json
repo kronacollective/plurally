@@ -20,6 +20,7 @@
     "date-fns": "^4.1.0",
     "immer": "^11.1.4",
     "konsta": "^5.0.7",
+    "mime": "^4.1.0",
     "mui-color-input": "^7.0.0",
     "mui-markdown": "^2.1.1",
     "nanoid": "^5.1.6",
@@ -28,6 +29,7 @@
     "react-dom": "19.2.3",
     "react-split-pane": "^3.2.0",
     "react-swipeable-list": "^1.10.0",
+    "use-file-picker": "^2.1.4",
     "use-immer": "^0.11.0"
   },
   "devDependencies": {

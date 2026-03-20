@@ -21,6 +21,12 @@ const TAB_COMPONENTS = {
   fields: FieldsMemberDisplay,
 }
 
+type MemberMutations = {
+  update: () => Promise<void>,
+  deleteMember: () => Promise<void>,
+  updateAvatar: (url: string) => Promise<void>,
+};
+
 export default function MemberDisplay({
   member_id,
 }: {
@@ -57,7 +63,8 @@ export default function MemberDisplay({
     });
   }, [member, updateMemberState]);
 
-  const member_mutations = useShortMutations(
+  // @ts-expect-error Bad
+  const member_mutations = useShortMutations<MemberMutations>(
     ["member", member_id],
     {
       update: async () => {
@@ -71,7 +78,13 @@ export default function MemberDisplay({
           .from('members')
           .delete()
           .eq('id', member_id);
-      }
+      },
+      updateAvatar: async (url: string) => {
+        await supabase
+          .from('members')
+          .update({ avatar: url })
+          .eq('id', member_id);
+      },
     }
   );
 

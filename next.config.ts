@@ -4,7 +4,10 @@ const nextConfig: NextConfig = {
   /* config options here */
   images: {
     remotePatterns: [
-      new URL('https://file.garden/**')
+      {
+        protocol: 'https',
+        hostname: '*',
+      }
     ]
   },
   async redirects() {

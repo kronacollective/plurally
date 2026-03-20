@@ -1,11 +1,14 @@
 import { Avatar, Stack, TextField, useMediaQuery, useTheme } from "@mui/material";
-import { Block, Fab, Link, Sheet, Toolbar, ToolbarPane } from "konsta/react";
+import { Block, Button, Fab, Link, Sheet, Toolbar, ToolbarPane } from "konsta/react";
 import Image from "next/image";
 import { Tables } from '../../../../../lib/supabase/database.types';
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { Check, Close, Save } from "@mui/icons-material";
 import { MuiColorInput } from "mui-color-input";
 import { Updater } from "use-immer";
+import { useFilePicker } from 'use-file-picker';
+import { useSupabase } from "@/lib/supabase/client";
+import mime from 'mime';
 
 const AVATAR_SIZES = [300, 300];
 
@@ -19,16 +22,37 @@ export default function MainMemberDisplay({
   member_mutations: {
     update: () => Promise<void>;
     deleteMember: () => Promise<void>;
+    updateAvatar: (url: string) => Promise<void>;
   } & {
     invalidateCache: () => Promise<void>;
   },
   member_state: Record<string, string | null>,
   updateMemberState: Updater<Record<string, string | null>>,
 }) {
+  const supabase = useSupabase();
+  const [ avatar_src, setAvatarSrc ] = useState<string | null>(null);
+  const [ avatar_file, setAvatarFile ] = useState<File | null>(null);
+  const { openFilePicker, } = useFilePicker({
+    readAs: 'DataURL',
+    accept: 'image/*',
+    onFilesSuccessfullySelected: ({filesContent, plainFiles}) => {
+      setAvatarSrc(filesContent.at(0)!.content)
+      setAvatarFile(plainFiles.at(0)!);
+    },
+  });
   const theme = useTheme()
   const is_mobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const [ avatar_sheet_open, setAvatarSheetOpen ] = useState(false);
+
+  const uploadAvatar = useCallback(async () => {
+    const path = `${member.id}.${mime.getExtension(avatar_file!.type)}`;
+    await supabase.storage
+      .from('avatars')
+      .upload(path, avatar_file!, {upsert: true});
+    const { data } = await supabase.storage.from('avatars').getPublicUrl(path);
+    member_mutations.updateAvatar(data.publicUrl);
+  }, [avatar_file, member.id, member_mutations, supabase.storage]);
 
   return (
     <>
@@ -60,21 +84,35 @@ export default function MainMemberDisplay({
           </ToolbarPane>
           <ToolbarPane>
             <Link iconOnly onClick={() => {
-              member_mutations.update();
+              uploadAvatar();
               setAvatarSheetOpen(false);
             }}>
               <Check/>
             </Link>
           </ToolbarPane>
         </Toolbar>
-        <Block>
-          <TextField
+        <Block style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
+          {/* <TextField
             label="Avatar URL"
             variant="outlined"
             sx={{ width: '100%' }}
             value={member_state.avatar ?? ''}
             onChange={ev => updateMemberState(draft => { draft.avatar = ev.target.value })}
-          />
+          /> */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          {avatar_src && <img
+            src={avatar_src}
+            id="proposed-avatar"
+            alt="Proposed profile picture"
+            width={300}
+            height={300}
+            style={{ padding: 16 }}
+          />}
+          <Button
+            onClick={openFilePicker}
+          >
+            Select image
+          </Button>
         </Block>
       </Sheet>
       <Stack gap={2} display="flex" sx={{ width: '100%', justifyContent: 'center', alignItems: 'center' }}>
