@@ -4,7 +4,6 @@ import { Stack, Typography } from "@mui/material";
 import { DatePicker, DateTimePicker } from "@mui/x-date-pickers";
 import { format, formatISO, parseJSON } from "date-fns";
 import { Button } from "konsta/react";
-import MuiMarkdown from "mui-markdown";
 import { useCallback, useMemo, useState } from "react";
 
 export default function EditableDateField({

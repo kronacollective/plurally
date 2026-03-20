@@ -1,13 +1,10 @@
 'use client';
 
-import { Tables } from "@/lib/supabase/database.types";
-import { Avatar, CircularProgress, Stack, TextField, useMediaQuery, useTheme } from "@mui/material";
-import Image from "next/image";
-import { MuiColorInput } from "mui-color-input";
-import { useCallback, useEffect, useOptimistic, useState, useTransition } from "react";
+import { Stack, useMediaQuery, useTheme } from "@mui/material";
+import { useEffect, useState } from "react";
 import { useSupabase } from "@/lib/supabase/client";
-import { Block, Fab, Link, Sheet, Tabbar, TabbarLink, Toolbar, ToolbarPane } from "konsta/react";
-import { Check, Close, Person, Save, Settings, TextFields } from "@mui/icons-material";
+import { Tabbar, TabbarLink, ToolbarPane } from "konsta/react";
+import { Person, Settings, TextFields } from "@mui/icons-material";
 import { useShortMutations, useShortQuery } from "@/lib/hooks/useShortQuery";
 import { useImmer } from "use-immer";
 import { DRAWER_WIDTH } from "@/lib/globals";
