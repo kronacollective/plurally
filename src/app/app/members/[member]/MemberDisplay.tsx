@@ -79,12 +79,14 @@ export default function MemberDisplay({
 
   return !member ? <></> : (
     <Stack gap={2} display="flex" sx={{ width: '100%', justifyContent: 'center', alignItems: 'center' }}>
-      <Tab
-        member={member}
-        member_mutations={member_mutations}
-        member_state={member_state}
-        updateMemberState={updateMemberState}
-      />
+      <div className="mb-16">
+        <Tab
+          member={member}
+          member_mutations={member_mutations}
+          member_state={member_state}
+          updateMemberState={updateMemberState}
+        />
+      </div>
       <Tabbar
         className="right-0 bottom-0 fixed"
         style={{ left: is_mobile ? '0' : DRAWER_WIDTH, width: is_mobile ? '100%' : `calc(100% - ${DRAWER_WIDTH}px)` }}
