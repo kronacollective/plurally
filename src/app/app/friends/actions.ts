@@ -12,7 +12,7 @@ export async function getFriendFronters(self_id: string, friend_list: string[]) 
       .select('buckets!bucket ( id, account ), account')
       .eq('account', self_id)
       .eq('buckets.account', friend_id);
-    const buckets_we_are_in = buckets_we_are_in_data?.map(bwai => bwai.buckets.id);
+    const buckets_we_are_in = buckets_we_are_in_data?.map(bwai => bwai?.buckets?.id);
     // Get all members from buckets we are in
     const { data: members_from_buckets_we_are_in_data } = await supabase
       .from('bucket_members')
