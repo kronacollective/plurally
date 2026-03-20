@@ -48,7 +48,7 @@ export default function MemberDisplay({
   const Tab = TAB_COMPONENTS[active_tab];
 
   return !member ? <></> : (
-    <Stack gap={2} display="flex" sx={{ width: '100%', justifyContent: 'center', alignItems: 'center' }}>
+    <Stack gap={2} display="flex" sx={{ width: '100%', justifyContent: 'center', alignItems: 'center', marginBottom: 8 }}>
       <Tab
         member={member}
         friend_id={friend_id}
