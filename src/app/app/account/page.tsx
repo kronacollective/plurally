@@ -1,11 +1,12 @@
 'use client';
-import { useShortQuery } from "@/lib/hooks/useShortQuery";
+import { useShortMutations, useShortQuery } from "@/lib/hooks/useShortQuery";
 import { useSupabase } from "@/lib/supabase/client";
 import { Stack, TextField } from "@mui/material";
 import { Button } from "konsta/react";
 import { MuiColorInput } from "mui-color-input";
 import { useCallback, useEffect } from "react";
 import { useImmer } from "use-immer";
+import { importFromSimplyPlural } from "./actions";
 
 export default function Account() {
   const supabase = useSupabase();
@@ -28,6 +29,7 @@ export default function Account() {
     display_name: '',
     description: '',
     color: '',
+    sp_key: '',
   });
 
   useEffect(() => {
@@ -37,12 +39,22 @@ export default function Account() {
     })
   }, [account, updateAccountData]);
 
-  const updateAccount = useCallback(async () => {
-    await supabase
-      .from('accounts')
-      .update(account_data)
-      .eq('username', account!.username);
-  }, [account, account_data, supabase]);
+  const account_mutators = useShortMutations(
+    ['account'],
+    {
+      update: async () => {
+        await supabase
+          .from('accounts')
+          .update(account_data)
+          .eq('id', account!.id);
+      }
+    },
+  );
+
+  const startImport = useCallback(async () => {
+    await account_mutators.update();
+    importFromSimplyPlural(account!.id);
+  }, [account, account_mutators]);
 
   return (
     <Stack gap={2} sx={{ width: '100%', justifyContent: 'center', alignItems: 'center', marginTop: 5 }}>
@@ -78,11 +90,23 @@ export default function Account() {
         sx={{ width: '90%' }}
       />
       <Button
-        onClick={updateAccount}
+        onClick={account_mutators.update}
         style={{ width: '90%' }}
         disabled={account_data.username == ''}
       >
         Update account
+      </Button>
+      <TextField
+        label="SimplyPlural token"
+        value={account_data.sp_key}
+        onChange={ev => updateAccountData(draft => { draft.sp_key = ev.target.value })}
+        sx={{ width: '90%' }}
+      />
+      <Button
+        onClick={startImport}
+        style={{ width: '90%' }}
+      >
+        Import from SimplyPlural
       </Button>
     </Stack>
   )

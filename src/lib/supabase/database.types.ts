@@ -21,6 +21,7 @@ export type Database = {
           description: string | null
           display_name: string | null
           id: string
+          sp_key: string | null
           user: string
           username: string
         }
@@ -30,6 +31,7 @@ export type Database = {
           description?: string | null
           display_name?: string | null
           id?: string
+          sp_key?: string | null
           user: string
           username: string
         }
@@ -39,6 +41,7 @@ export type Database = {
           description?: string | null
           display_name?: string | null
           id?: string
+          sp_key?: string | null
           user?: string
           username?: string
         }
