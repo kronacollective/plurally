@@ -4,6 +4,7 @@ import { getFriendMembers } from "../actions";
 import { useSupabase } from "@/lib/supabase/client";
 import { useShortQuery } from "@/lib/hooks/useShortQuery";
 import { useRouter } from "next/navigation";
+import { useMemo } from "react";
 
 export default function FriendMembers({
   friend_id
@@ -34,10 +35,21 @@ export default function FriendMembers({
     [ account ],
   );
 
+  const ordered_members = useMemo(() => {
+    const proper_members = members?.filter(member => !member.is_status);
+    const custom_statuses = members?.filter(member => member.is_status);
+    const alphabetical_proper_members = proper_members?.toSorted((a, b) => a.name?.localeCompare(b.name!) ?? 0) ?? [];
+    const alphabetical_custom_statuses = custom_statuses?.toSorted((a, b) => a.name?.localeCompare(b.name!) ?? 0) ?? [];
+    return [
+      ...alphabetical_proper_members,
+      ...alphabetical_custom_statuses,
+    ];
+  }, [members]);
+
   return (
     <div style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <List sx={{ width: '90%' }}>
-        { members?.map(member => {
+        { ordered_members?.map(member => {
           return (
             <ListItem
               key={member.id}
