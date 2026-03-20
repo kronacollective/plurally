@@ -5,7 +5,7 @@ import { IconButton, List, ListItem, ListItemAvatar, ListItemButton, ListItemTex
 import { Block, BlockTitle, Fab, Link, Sheet, Toolbar, ToolbarPane } from "konsta/react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useImmer } from "use-immer";
 import { nanoid } from 'nanoid';
 
@@ -109,6 +109,18 @@ export default function MemberList() {
       }
     },
   );
+
+  const ordered_members = useMemo(() => {
+    const fronting_members = members?.filter(member => active_fronts?.find(afr => afr.member === member.id));
+    const sleeping_members = members?.filter(member => !active_fronts?.find(afr => afr.member === member.id));
+    const alphabetical_fronting_members = fronting_members?.toSorted((a, b) => a.name?.localeCompare(b.name!) ?? 0) ?? [];
+    const alphabetical_sleeping_members = sleeping_members?.toSorted((a, b) => a.name?.localeCompare(b.name!) ?? 0) ?? [];
+    return [
+      ...alphabetical_fronting_members,
+      ...alphabetical_sleeping_members,
+    ];
+  }, [active_fronts, members]);
+
   return (
     <>
       <Fab
@@ -175,7 +187,7 @@ export default function MemberList() {
       <Block>
         <BlockTitle style={{ marginBottom: 1 }}>All members</BlockTitle>
         <List>
-          { members?.map(member => {
+          { ordered_members?.map(member => {
             const is_fronting = active_fronts?.find(fr => fr.member === member.id);
             return (
               <ListItem
