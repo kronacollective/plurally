@@ -4,22 +4,26 @@ import { Stack, useMediaQuery, useTheme } from "@mui/material";
 import { useState } from "react";
 import { useSupabase } from "@/lib/supabase/client";
 import { Tabbar, TabbarLink, ToolbarPane } from "konsta/react";
-import { Person, Settings } from "@mui/icons-material";
+import { Person, Settings, TextFields } from "@mui/icons-material";
 import { DRAWER_WIDTH } from "@/lib/globals";
 import MainMemberDisplay from "./tabs/Main";
 import { CalendarIcon } from "@mui/x-date-pickers";
 import HistoryMemberDisplay from "./tabs/History";
 import { useShortQuery } from "@/lib/hooks/useShortQuery";
+import FieldsMemberDisplay from "./tabs/Fields";
 
 const TAB_COMPONENTS = {
   main: MainMemberDisplay,
   history: HistoryMemberDisplay,
+  fields: FieldsMemberDisplay,
 }
 
 export default function MemberDisplay({
   member_id,
+  friend_id,
 }: {
   member_id: string,
+  friend_id: string,
 }) {
   const supabase = useSupabase();
 
@@ -47,6 +51,7 @@ export default function MemberDisplay({
     <Stack gap={2} display="flex" sx={{ width: '100%', justifyContent: 'center', alignItems: 'center' }}>
       <Tab
         member={member}
+        friend_id={friend_id}
       />
       <Tabbar
         className="right-0 bottom-0 fixed"
@@ -64,6 +69,12 @@ export default function MemberDisplay({
             onClick={() => setActiveTab('history')}
             icon={<CalendarIcon/>}
             label="History"
+          />
+          <TabbarLink
+            active={active_tab === 'fields'}
+            onClick={() => setActiveTab('fields')}
+            icon={<TextFields/>}
+            label="Fields"
           />
         </ToolbarPane>
       </Tabbar>

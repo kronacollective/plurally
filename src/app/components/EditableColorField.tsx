@@ -1,5 +1,5 @@
 import { Edit, Save } from "@mui/icons-material";
-import { Stack, TextField, Typography } from "@mui/material";
+import { Stack, Typography } from "@mui/material";
 import { Button } from "konsta/react";
 import { MuiColorInput } from "mui-color-input";
 import { useCallback, useState } from "react";
@@ -8,17 +8,19 @@ export default function EditableColorField({
   label,
   value,
   onSave,
+  readonly,
 }: {
   label: string,
   value: string,
-  onSave: (value: string) => Promise<void>,
+  onSave?: (value: string) => Promise<void>,
+  readonly: boolean,
 }) {
   const [ editing, setEditing ] = useState(false);
   const [ inner_state, setInnerState ] = useState(value);
 
   const toggleEditing = useCallback(() => {
     if (editing) {
-      onSave(inner_state);
+      onSave?.(inner_state);
       setEditing(false);
     } else {
       setEditing(true);
@@ -50,12 +52,12 @@ export default function EditableColorField({
           />
         </Stack>
       )}
-      <Button clear
+      {!readonly && <Button clear
         onClick={toggleEditing}
         style={{ width: '4em', height: '4em' }}
       >
         { editing ? <Save/> : <Edit/> }
-      </Button>
+      </Button>}
     </Stack>
   )
 }

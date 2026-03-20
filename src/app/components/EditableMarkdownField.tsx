@@ -8,17 +8,19 @@ export default function EditableMarkdownField({
   label,
   value,
   onSave,
+  readonly,
 }: {
   label: string,
   value: string,
-  onSave: (value: string) => Promise<void>,
+  onSave?: (value: string) => Promise<void>,
+  readonly: boolean,
 }) {
   const [ editing, setEditing ] = useState(false);
   const [ inner_state, setInnerState ] = useState(value);
 
   const toggleEditing = useCallback(() => {
     if (editing) {
-      onSave(inner_state);
+      onSave?.(inner_state);
       setEditing(false);
     } else {
       setEditing(true);
@@ -41,12 +43,12 @@ export default function EditableMarkdownField({
           <MuiMarkdown>{value}</MuiMarkdown>
         </Stack>
       )}
-      <Button clear
+      {!readonly && <Button clear
         onClick={toggleEditing}
         style={{ width: '4em', height: '4em' }}
       >
         { editing ? <Save/> : <Edit/> }
-      </Button>
+      </Button>}
     </Stack>
   )
 }
