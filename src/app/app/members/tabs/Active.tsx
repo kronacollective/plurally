@@ -33,7 +33,7 @@ export default function FrontsActive () {
     async () => {
       const { data, error } = await supabase
         .from('fronts')
-        .select('*, member( * )')
+        .select('*, member( id, color, avatar, name, pronouns )')
         .eq('account', account!.id)
         .is('end', null);
       if (error) console.error('active_fronts', error);
