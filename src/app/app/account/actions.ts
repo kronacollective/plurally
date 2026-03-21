@@ -2,6 +2,15 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { nanoid } from "nanoid";
+import webpush from "web-push";
+
+webpush.setVapidDetails(
+  'kronacollective@gmail.com',
+  process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
+  process.env.VAPID_PRIVATE_KEY!,
+);
+
+let subscription: PushSubscription | null = null;
 
 const SP_API = 'https://api.apparyllis.com/v1';
 
@@ -148,4 +157,36 @@ export async function importFromSimplyPlural(account_id: string) {
       .select()
       .single();
   });
+}
+
+export async function subscribeUser(sub: PushSubscription) {
+  subscription = sub;
+  return { success: true };
+}
+
+export async function unsubscribeUser() {
+  subscription = null;
+  return { success: true };
+}
+
+export async function sendNotification(message: string) {
+  if (!subscription) {
+    throw new Error('No subscription available');
+  }
+
+  try {
+    await webpush.sendNotification(
+      // @ts-expect-error Type import issue
+      subscription,
+      JSON.stringify({
+        title: 'Plurally',
+        body: message,
+        icon: '/web-app-manifest-192x192.png'
+      }),
+    );
+    return { success: true };
+  } catch (error) {
+    console.error('Could not send push notification:', error);
+    return { success: false, error: 'Could not send notification' };
+  }
 }
