@@ -28,7 +28,7 @@ export default function FriendMembers({
   );
 
   const { data: members } = useShortQuery(
-    ['friend', friend_id, 'members'],
+    [account!.id, 'friend', friend_id, 'members'],
     async () => {
       return getFriendMembers(account!.id, friend_id);
     },

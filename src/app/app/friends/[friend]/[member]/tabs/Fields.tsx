@@ -30,7 +30,7 @@ export default function FieldsMemberDisplay({
   );
 
   const { data: fields } = useShortQuery(
-    ['fields'],
+    ['fields', account!.id, friend_id],
     async () => {
       const fields = await getFriendFields(account!.id, friend_id);
       return fields;
@@ -39,7 +39,7 @@ export default function FieldsMemberDisplay({
   );
 
   const { data: fields_and_values } = useShortQuery(
-    ['field-values'],
+    ['field-values', member.id],
     async () => {
       const { data } = await supabase
         .from('field_values')

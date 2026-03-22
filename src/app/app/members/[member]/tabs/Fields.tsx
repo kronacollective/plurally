@@ -53,7 +53,7 @@ export default function FieldsMemberDisplay({
   );
 
   const { data: fields } = useShortQuery(
-    ['fields'],
+    ['fields', account!.id],
     async () => {
       const { data } = await supabase
         .from('fields')
@@ -65,7 +65,7 @@ export default function FieldsMemberDisplay({
   );
 
   const { data: fields_and_values } = useShortQuery(
-    ['field-values'],
+    ['field-values', member.id],
     async () => {
       const { data } = await supabase
         .from('field_values')
@@ -77,7 +77,7 @@ export default function FieldsMemberDisplay({
 
   // @ts-expect-error Bad still
   const fav_mutators = useShortMutations<FavMutators>(
-    ['field-values'],
+    ['field-values', member.id],
     {
       save: async (field_id: string, value: Json) => {
         await supabase

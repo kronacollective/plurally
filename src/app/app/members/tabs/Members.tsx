@@ -42,7 +42,7 @@ export default function MemberList() {
   );
 
   const { data: members } = useShortQuery(
-    ["members"],
+    ["members", account!.id],
     async () => {
       const { data } = await supabase
         .from('members')
@@ -56,7 +56,7 @@ export default function MemberList() {
 
 
   const member_mutations = useShortMutations(
-    ["members"],
+    ["members", account!.id],
     {
       add: async () => {
         await supabase
@@ -72,7 +72,7 @@ export default function MemberList() {
   );
 
   const { data: active_fronts } = useShortQuery(
-    ["fronts", "active"],
+    ["fronts", account!.id, "active"],
     async () => {
       const { data, error } = await supabase
         .from('fronts')

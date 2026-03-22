@@ -41,7 +41,7 @@ export default function BucketFields({
   );
 
   const { data: fields } = useShortQuery(
-    ['fields'],
+    ['fields', account!.id],
     async () => {
       const { data } = await supabase
         .from('fields')
@@ -53,7 +53,7 @@ export default function BucketFields({
   );
 
   const { data: bucket_fields } = useShortQuery(
-    ['bucket-fields'],
+    ['bucket-fields', bucket.id],
     async () => {
       const { data } = await supabase
         .from('bucket_fields')
@@ -66,7 +66,7 @@ export default function BucketFields({
 
   // @ts-expect-error Types bad
   const bucket_field_mutators = useShortMutations<BucketFieldMutations>(
-    ['bucket-fields'],
+    ['bucket-fields', bucket.id],
     {
       includeField: async (field_id: string) => {
         await supabase

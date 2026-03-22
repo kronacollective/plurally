@@ -42,7 +42,7 @@ export default function AnalyticsMin({
   );
 
   const { data: fronts_in_range } = useShortQuery(
-    ['fronts', 'range'],
+    ['fronts', account!.id, 'range'],
     async () => {
       if (!account) return [];
       const { data: inactive_fronts } = await supabase

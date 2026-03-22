@@ -41,7 +41,7 @@ export default function BucketFriends({
   );
 
   const { data: friends } = useShortQuery(
-    ['friends'],
+    ['friends', account!.id],
     async () => {
       const { data } = await supabase
         .from('friends')
@@ -54,7 +54,7 @@ export default function BucketFriends({
   );
 
   const { data: bucket_friends } = useShortQuery(
-    ['bucket-friends'],
+    ['bucket-friends', bucket.id],
     async () => {
       const { data } = await supabase
         .from('bucket_friends')
@@ -67,7 +67,7 @@ export default function BucketFriends({
 
   // @ts-expect-error Types bad
   const bucket_friend_mutators = useShortMutations<BucketFriendMutations>(
-    ['bucket-friends'],
+    ['bucket-friends', bucket.id],
     {
       includeFriend: async (friend_id: string) => {
         await supabase

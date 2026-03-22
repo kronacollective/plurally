@@ -41,7 +41,7 @@ export default function BucketMembers({
   );
 
   const { data: members } = useShortQuery(
-    ['members'],
+    ['members', account!.id],
     async () => {
       const { data } = await supabase
         .from('members')
@@ -53,7 +53,7 @@ export default function BucketMembers({
   );
 
   const { data: bucket_members } = useShortQuery(
-    ['bucket-members'],
+    ['bucket-members', bucket.id],
     async () => {
       const { data } = await supabase
         .from('bucket_members')
@@ -66,7 +66,7 @@ export default function BucketMembers({
 
   // @ts-expect-error Types bad
   const bucket_member_mutators = useShortMutations<BucketMemberMutations>(
-    ['bucket-members'],
+    ['bucket-members', bucket.id],
     {
       includeMember: async (member_id: string) => {
         await supabase
