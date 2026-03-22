@@ -41,7 +41,7 @@ export default function BucketFields({
   );
 
   const { data: fields } = useShortQuery(
-    ['fields', account!.id],
+    ['fields', account?.id],
     async () => {
       const { data } = await supabase
         .from('fields')

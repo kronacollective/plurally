@@ -45,7 +45,7 @@ export default function Fields() {
   );
 
   const { data: fields } = useShortQuery(
-    ['fields', account!.id],
+    ['fields', account?.id],
     async () => {
       if (!account) return [];
       const { data } = await supabase
@@ -59,7 +59,7 @@ export default function Fields() {
 
   // @ts-expect-error Still bad
   const field_mutators = useShortMutations<FieldMutators>(
-    ['fields', account!.id],
+    ['fields', account?.id],
     {
       update: async (field_id: string, type: string) => {
         await supabase
@@ -77,7 +77,7 @@ export default function Fields() {
         await supabase
           .from('fields')
           .insert({
-            account: account!.id,
+            account: account?.id,
             name: sheet_form.name,
           })
       }

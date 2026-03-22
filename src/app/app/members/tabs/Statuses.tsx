@@ -36,7 +36,7 @@ export default function Statuses() {
   );
 
   const { data: statuses } = useShortQuery(
-    ["statuses", account!.id],
+    ["statuses", account?.id],
     async () => {
       const { data } = await supabase
         .from('members')
@@ -50,7 +50,7 @@ export default function Statuses() {
 
 
   const status_mutations = useShortMutations(
-    ["statuses", account!.id],
+    ["statuses", account?.id],
     {
       add: async () => {
         await supabase
@@ -67,7 +67,7 @@ export default function Statuses() {
   );
 
   const { data: active_fronts } = useShortQuery(
-    ["fronts", account!.id, "active"],
+    ["fronts", account?.id, "active"],
     async () => {
       const { data, error } = await supabase
         .from('fronts')
@@ -82,7 +82,7 @@ export default function Statuses() {
 
   // @ts-expect-error Strictness is making short mutations not work anymore
   const front_mutations = useShortMutations<FrontMutators>(
-    ["fronts", account!.id],
+    ["fronts", account?.id],
     {
       front: async (member_id: string) => {
         const { error } = await supabase

@@ -30,7 +30,7 @@ export default function FieldsMemberDisplay({
   );
 
   const { data: fields } = useShortQuery(
-    ['fields', account!.id, friend_id],
+    ['fields', account?.id, friend_id],
     async () => {
       const fields = await getFriendFields(account!.id, friend_id);
       return fields;

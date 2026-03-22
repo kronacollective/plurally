@@ -41,7 +41,7 @@ export default function BucketMembers({
   );
 
   const { data: members } = useShortQuery(
-    ['members', account!.id],
+    ['members', account?.id],
     async () => {
       const { data } = await supabase
         .from('members')

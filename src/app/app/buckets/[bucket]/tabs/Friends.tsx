@@ -41,7 +41,7 @@ export default function BucketFriends({
   );
 
   const { data: friends } = useShortQuery(
-    ['friends', account!.id],
+    ['friends', account?.id],
     async () => {
       const { data } = await supabase
         .from('friends')

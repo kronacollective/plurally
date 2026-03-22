@@ -31,7 +31,7 @@ export default function FrontsActive () {
   );
 
   const { data: active_fronts } = useShortQuery(
-    ["fronts", account!.id, "active"],
+    ["fronts", account?.id, "active"],
     async () => {
       const { data, error } = await supabase
         .from('fronts')
@@ -51,7 +51,7 @@ export default function FrontsActive () {
 
   // @ts-expect-error Bad still
   const front_mutators = useShortMutations<FrontMutations>(
-    ["fronts", account!.id],
+    ["fronts", account?.id],
     {
       update: async (member_id: string) => {
         await supabase

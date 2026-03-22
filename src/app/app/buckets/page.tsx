@@ -35,7 +35,7 @@ export default function PrivacyBuckets() {
   );
 
   const { data: buckets } = useShortQuery(
-    ['buckets', account!.id],
+    ['buckets', account?.id],
     async () => {
       const { data } = await supabase
         .from('buckets')
@@ -47,7 +47,7 @@ export default function PrivacyBuckets() {
   );
 
   const bucket_mutators = useShortMutations(
-    ['buckets', account!.id],
+    ['buckets', account?.id],
     {
       create: async () => {
         await supabase

@@ -41,7 +41,7 @@ export default function Friends() {
   );
 
   const { data: friends_and_requests } = useShortQuery(
-    ['friends', account!.id],
+    ['friends', account?.id],
     async () => {
       if (!account) return;
       const { data, error } = await supabase
@@ -82,7 +82,7 @@ export default function Friends() {
 
   // @ts-expect-error Wrong inference in mutators
   const friendship_mutators = useShortMutations<FriendshipMutators>(
-    ['friends', account!.id],
+    ['friends', account?.id],
     {
       acceptIncomingRequest: async (relating_id: string, related_id: string) => {
         await supabase
