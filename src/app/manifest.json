@@ -1,6 +1,11 @@
 {
   "name": "Plurally",
   "short_name": "Plly",
+  "description": "A tool for plurality management",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#eee",
+  "theme_color": "#12aca4",
   "icons": [
     {
       "src": "/web-app-manifest-192x192.png",
@@ -14,8 +19,5 @@
       "type": "image/png",
       "purpose": "maskable"
     }
-  ],
-  "theme_color": "#ffffff",
-  "background_color": "#ffffff",
-  "display": "standalone"
+  ]
 }
