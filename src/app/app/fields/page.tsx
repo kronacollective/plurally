@@ -77,7 +77,7 @@ export default function Fields() {
         await supabase
           .from('fields')
           .insert({
-            account: account?.id,
+            account: account!.id,
             name: sheet_form.name,
           })
       }
