@@ -1,9 +1,10 @@
 import { useShortMutations, useShortQuery } from "@/lib/hooks/useShortQuery";
 import { useSupabase } from "@/lib/supabase/client";
+import { Tables } from "@/lib/supabase/database.types";
 import { List, ListItem, ListItemAvatar, ListItemText, Stack, TextField } from "@mui/material";
 import { Block, BlockTitle, Button } from 'konsta/react';
 import Image from "next/image";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useImmer } from "use-immer";
 
 type FrontMutations = {
@@ -14,6 +15,7 @@ export default function FrontsActive () {
   const supabase = useSupabase();
 
   const [ comments, updateComments ] = useImmer<Record<string, string>>({});
+  // const [ active_fronts, setActiveFronts ] = useState<Tables<'fronts'>[]>([]);
 
   const { data: account } = useShortQuery(
     ["account"],
@@ -29,17 +31,17 @@ export default function FrontsActive () {
   );
 
   const { data: active_fronts } = useShortQuery(
-    ["fronts", "active"],
+    ["fronts", account!.id, "active"],
     async () => {
       const { data, error } = await supabase
         .from('fronts')
-        .select('*, member( id, color, avatar, name, pronouns )')
+        .select('*, member:member( id, color, avatar, name, pronouns )')
         .eq('account', account!.id)
         .is('end', null);
       if (error) console.error('active_fronts', error);
       return data;
     },
-    [ account ],
+    [ account, supabase ],
   );
 
   useEffect(() => {
@@ -49,7 +51,7 @@ export default function FrontsActive () {
 
   // @ts-expect-error Bad still
   const front_mutators = useShortMutations<FrontMutations>(
-    ["fronts"],
+    ["fronts", account!.id],
     {
       update: async (member_id: string) => {
         await supabase
