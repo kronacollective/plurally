@@ -90,22 +90,22 @@ export default function MemberList() {
     ["fronts"],
     {
       front: async (member_id: string) => {
-        const { error } = await supabase
-          .from('fronts')
-          .insert({
-            member: member_id,
-            account: account!.id,
-          });
-        if (error) console.error(error);
+        const response = await fetch(`/api/member/${member_id}/front`, {
+          method: 'POST',
+        });
+        const result = await response.json();
+        if (result.error) {
+          console.error(result);
+        }
       },
       unfront: async (member_id: string) => {
-        await supabase
-          .from('fronts')
-          .update({
-            end: new Date().toISOString(),
-          })
-          .eq('member', member_id)
-          .is('end', null);
+        const response = await fetch(`/api/member/${member_id}/unfront`, {
+          method: 'POST',
+        });
+        const result = await response.json();
+        if (result.error) {
+          console.error(result);
+        }
       }
     },
   );

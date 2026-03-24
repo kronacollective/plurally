@@ -92,13 +92,6 @@ export default function Statuses() {
         if (result.error) {
           console.error(result);
         }
-        // const { error } = await supabase
-        //   .from('fronts')
-        //   .insert({
-        //     member: member_id,
-        //     account: account!.id,
-        //   });
-        // if (error) console.error(error);
       },
       unfront: async (member_id: string) => {
         const response = await fetch(`/api/member/${member_id}/unfront`, {
