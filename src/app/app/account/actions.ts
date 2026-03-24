@@ -5,12 +5,10 @@ import { nanoid } from "nanoid";
 import webpush from "web-push";
 
 webpush.setVapidDetails(
-  'kronacollective@gmail.com',
+  'mailto:kronacollective@gmail.com',
   process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
   process.env.VAPID_PRIVATE_KEY!,
 );
-
-let subscription: PushSubscription | null = null;
 
 const SP_API = 'https://api.apparyllis.com/v1';
 
@@ -159,25 +157,42 @@ export async function importFromSimplyPlural(account_id: string) {
   });
 }
 
-export async function subscribeUser(sub: PushSubscription) {
-  subscription = sub;
-  return { success: true };
+export async function subscribeUser(account_id: string, sub: PushSubscription) {
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from('subscriptions')
+    // @ts-expect-error: PushSubscription should be JSONable
+    .insert({
+      account: account_id,
+      subscription: sub,
+    });
+  return { success: !error, error };
 }
 
-export async function unsubscribeUser() {
-  subscription = null;
-  return { success: true };
+export async function unsubscribeUser(account_id: string) {
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from('subscriptions')
+    .delete()
+    .eq('account', account_id);
+  return { success: !error, error };
 }
 
-export async function sendNotification(message: string) {
-  if (!subscription) {
-    throw new Error('No subscription available');
+export async function sendNotification(account_id: string, message: string) {
+  const supabase = await createClient();
+  const { data: sub, error } = await supabase
+    .from('subscriptions')
+    .select()
+    .eq('account', account_id)
+    .single();
+  if (!sub?.subscription) {
+    throw new Error(`No subscription available: ${error?.message}`);
   }
 
   try {
     await webpush.sendNotification(
       // @ts-expect-error Type import issue
-      subscription,
+      sub.subscription,
       JSON.stringify({
         title: 'Plurally',
         body: message,

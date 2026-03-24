@@ -350,6 +350,29 @@ export type Database = {
           },
         ]
       }
+      subscriptions: {
+        Row: {
+          account: string
+          subscription: Json
+        }
+        Insert: {
+          account: string
+          subscription: Json
+        }
+        Update: {
+          account?: string
+          subscription?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscriptions_account_fkey"
+            columns: ["account"]
+            isOneToOne: true
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never

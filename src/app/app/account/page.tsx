@@ -16,6 +16,19 @@ export default function Account() {
   const [ supported, setSupported ] = useState(false);
   const [ subscription, setSubscription ] = useState<PushSubscription | null>(null);
 
+  const { data: account } = useShortQuery(
+    ['account'],
+    async () => {
+      const { data: user } = await supabase.auth.getUser();
+      const { data } = await supabase
+        .from('accounts')
+        .select()
+        .eq('user', user.user?.id ?? '')
+        .single();
+      return data;
+    },
+  );
+
   const registerServiceWorker = useCallback(async () => {
     const reg = await navigator.serviceWorker.register('/sw.js', {
       scope: '/',
@@ -43,31 +56,18 @@ export default function Account() {
     });
     setSubscription(sub);
     const serialized_sub = JSON.parse(JSON.stringify(sub));
-    await subscribeUser(serialized_sub);
-  }, []);
+    await subscribeUser(account!.id, serialized_sub);
+  }, [account]);
 
   const unsubscribeFromPush = useCallback(async () => {
     await subscription?.unsubscribe();
     setSubscription(null);
-    await unsubscribeUser();
-  }, [subscription]);
+    await unsubscribeUser(account!.id);
+  }, [account, subscription]);
 
   const sendTestNotification = useCallback(async () => {
-    if (subscription) await sendNotification('This is a test notification from Plurally');
-  }, [subscription]);
-
-  const { data: account } = useShortQuery(
-    ['account'],
-    async () => {
-      const { data: user } = await supabase.auth.getUser();
-      const { data } = await supabase
-        .from('accounts')
-        .select()
-        .eq('user', user.user?.id ?? '')
-        .single();
-      return data;
-    },
-  );
+    if (subscription) await sendNotification(account!.id, 'This is a test notification from Plurally');
+  }, [account, subscription]);
 
   const [ account_data, updateAccountData ] = useImmer<Record<string, string | null>>({
     username: '',
