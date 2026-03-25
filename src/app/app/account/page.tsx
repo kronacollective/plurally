@@ -85,7 +85,7 @@ export default function Account() {
   }, [account, updateAccountData]);
 
   const account_mutators = useShortMutations(
-    ['account'],
+    ['account', account?.id],
     {
       update: async () => {
         await supabase
