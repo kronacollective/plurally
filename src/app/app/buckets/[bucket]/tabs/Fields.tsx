@@ -1,8 +1,7 @@
 import { useShortMutations, useShortQuery } from "@/lib/hooks/useShortQuery";
 import { useSupabase } from "@/lib/supabase/client";
 import { Tables } from "@/lib/supabase/database.types";
-import { Checkbox, List, ListItem, ListItemAvatar, ListItemText, Stack } from "@mui/material";
-import Image from "next/image";
+import { Checkbox, List, ListItem, ListItemText, Stack } from "@mui/material";
 import { Updater } from "use-immer";
 
 type BucketFieldMutations = {
@@ -12,9 +11,6 @@ type BucketFieldMutations = {
 
 export default function BucketFields({
   bucket,
-  bucket_mutations,
-  bucket_state,
-  updateBucketState,
 }: {
   bucket: Tables<'buckets'>
   bucket_mutations: {
