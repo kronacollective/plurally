@@ -1,5 +1,5 @@
 'use client';
-import { Box, Drawer, IconButton, Stack, useMediaQuery, useTheme } from "@mui/material";
+import { Box, createTheme, Drawer, IconButton, Stack, ThemeProvider, useMediaQuery, useTheme } from "@mui/material";
 import { App, Navbar, Page } from "konsta/react";
 import MenuDrawer from "../components/Drawer";
 import Menu from "@mui/icons-material/Menu";
@@ -23,6 +23,12 @@ const TITLES = {
   '^/app/account$': 'Account',
   '^/app/account/create$': 'Create an account',
 };
+
+const THEME = createTheme({
+  colorSchemes: {
+    dark: true,
+  },
+});
 
 export default function AppLayout({
   children,
@@ -59,6 +65,7 @@ export default function AppLayout({
     .filter(x => x)
     .at(0);
 
+  // Create account effect
   useEffect(() => {
     if (pathname === '/app/account/create') return;
     const checkIfAccountExists = async () => {
@@ -75,72 +82,93 @@ export default function AppLayout({
     checkIfAccountExists();
   }, [pathname, router, supabase]);
 
+  // Dark mode effect
+  useEffect(() => {
+    const prefers_dark_scheme = window.matchMedia('(prefers-color-scheme: dark)');
+
+    if (prefers_dark_scheme.matches) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+
+    prefers_dark_scheme.addEventListener('change', ev => {
+      if (ev.matches) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    });
+  }, []);
+
   return (
     <App theme='material' className="safe-areas">
-      <QueryProvider>
-        <LocalizationProvider dateAdapter={AdapterDateFns}>
-          <Page>
-            {/* <Box
-              component="nav"
-              sx={{ width: { sm: `calc(100% - ${DRAWER_WIDTH}px)`}, ml: { sm: `${DRAWER_WIDTH}px` } }}
-            >
-            </Box> */}
-            <Box
-              component="nav"
-              sx={{ width: { sm: DRAWER_WIDTH }, flexShrink: { sm: 0 } }}
-              aria-label="navigation"
-            >
-              <Drawer
-                variant="temporary"
-                open={mobile_open}
-                onTransitionEnd={handleDrawerTransitionEnd}
-                onClose={handleDrawerClose}
-                sx={{
-                  display: { xs: 'block', sm: 'none' },
-                  '& .MuiDrawer-paper': { boxSizing: 'border-box', width: DRAWER_WIDTH }
-                }}
-                slotProps={{
-                  root: {
-                    keepMounted: true
-                  }
-                }}
+      <ThemeProvider theme={THEME}>
+        <QueryProvider>
+          <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <Page>
+              {/* <Box
+                component="nav"
+                sx={{ width: { sm: `calc(100% - ${DRAWER_WIDTH}px)`}, ml: { sm: `${DRAWER_WIDTH}px` } }}
               >
-                <MenuDrawer
-                  page={pathname}
-                />
-              </Drawer>
-              <Drawer open
-                variant="permanent"
-                sx={{
-                  display: { xs: 'none', sm: 'block' },
-                  '& .MuiDrawer-paper': { boxSizing: 'border-box', width: DRAWER_WIDTH }
-                }}
+              </Box> */}
+              <Box
+                component="nav"
+                sx={{ width: { sm: DRAWER_WIDTH }, flexShrink: { sm: 0 } }}
+                aria-label="navigation"
               >
-                <MenuDrawer
-                  page={pathname}
-                />
-              </Drawer>
-            </Box>
-            <Box
-              component="main"
-              sx={{ flexGrow: 1, width: `calc(100% - ${is_mobile ? 0 : DRAWER_WIDTH}px)`, height: '100vh', ml: `${is_mobile ? 0 : DRAWER_WIDTH}px` }}
-            >
-              <Stack sx={{ mt: 8 }}>
-                <Navbar
-                  title={title}
-                  className="top-0 fixed"
-                  left={
-                    <IconButton aria-label="open toolbar" onClick={handleDrawerToggle}>
-                      <Menu/>
-                    </IconButton>
-                  }
-                />
-                {children}
-              </Stack>
-            </Box>
-          </Page>
-        </LocalizationProvider>
-      </QueryProvider>
+                <Drawer
+                  variant="temporary"
+                  open={mobile_open}
+                  onTransitionEnd={handleDrawerTransitionEnd}
+                  onClose={handleDrawerClose}
+                  sx={{
+                    display: { xs: 'block', sm: 'none' },
+                    '& .MuiDrawer-paper': { boxSizing: 'border-box', width: DRAWER_WIDTH }
+                  }}
+                  slotProps={{
+                    root: {
+                      keepMounted: true
+                    }
+                  }}
+                >
+                  <MenuDrawer
+                    page={pathname}
+                  />
+                </Drawer>
+                <Drawer open
+                  variant="permanent"
+                  sx={{
+                    display: { xs: 'none', sm: 'block' },
+                    '& .MuiDrawer-paper': { boxSizing: 'border-box', width: DRAWER_WIDTH }
+                  }}
+                >
+                  <MenuDrawer
+                    page={pathname}
+                  />
+                </Drawer>
+              </Box>
+              <Box
+                component="main"
+                sx={{ flexGrow: 1, width: `calc(100% - ${is_mobile ? 0 : DRAWER_WIDTH}px)`, height: '100vh', ml: `${is_mobile ? 0 : DRAWER_WIDTH}px` }}
+              >
+                <Stack sx={{ mt: 8 }}>
+                  <Navbar
+                    title={title}
+                    className="top-0 fixed"
+                    left={
+                      <IconButton aria-label="open toolbar" onClick={handleDrawerToggle}>
+                        <Menu/>
+                      </IconButton>
+                    }
+                  />
+                  {children}
+                </Stack>
+              </Box>
+            </Page>
+          </LocalizationProvider>
+        </QueryProvider>
+      </ThemeProvider>
     </App>
   )
 }
