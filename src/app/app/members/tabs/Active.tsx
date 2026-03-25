@@ -1,10 +1,9 @@
 import { useShortMutations, useShortQuery } from "@/lib/hooks/useShortQuery";
 import { useSupabase } from "@/lib/supabase/client";
-import { Tables } from "@/lib/supabase/database.types";
 import { List, ListItem, ListItemAvatar, ListItemText, Stack, TextField } from "@mui/material";
 import { Block, BlockTitle, Button } from 'konsta/react';
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useImmer } from "use-immer";
 
 type FrontMutations = {
@@ -62,6 +61,11 @@ export default function FrontsActive () {
     }
   );
 
+  // HACK: Refetch if we don't have member data
+  useEffect(() => {
+    if (!active_fronts?.[0]?.member?.id) front_mutators.invalidateCache();
+  }, [active_fronts, front_mutators]);
+
   return (
     <>
       <Block>
@@ -99,7 +103,7 @@ export default function FrontsActive () {
                   <TextField
                     label="Comment"
                     variant="outlined"
-                    value={comments[af.member.id]}
+                    value={comments[af.member.id] ?? ''}
                     onChange={ev => updateComments(draft => { draft[af.member.id] = ev.target.value })}
                   />
                   <Button
