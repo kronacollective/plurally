@@ -73,6 +73,7 @@ export default function Friends() {
   }, [account, friends]);
 
   useEffect(() => {
+    if (!account) return;
     const getFriendFrontersFromServer = async () => {
       const fronters = await getFriendFronters(account!.id, friend_list);
       setFriendsFronters(fronters);
