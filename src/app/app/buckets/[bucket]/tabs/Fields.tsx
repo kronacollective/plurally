@@ -76,7 +76,7 @@ export default function BucketFields({
             field: field_id,
           });
       },
-      excludeMember: async (field_id: string) => {
+      excludeField: async (field_id: string) => {
         await supabase
           .from('bucket_fields')
           .delete()
