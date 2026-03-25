@@ -1,8 +1,8 @@
 import { useShortMutations, useShortQuery } from "@/lib/hooks/useShortQuery";
 import { useSupabase } from "@/lib/supabase/client";
-import { Add, ArrowDownward, ArrowUpward, Check, Close } from "@mui/icons-material";
+import { Add, ArrowDownward, ArrowLeft, ArrowUpward, Check, Close, CreateNewFolder, Folder, Settings } from "@mui/icons-material";
 import { IconButton, List, ListItem, ListItemAvatar, ListItemButton, ListItemText, Stack, TextField, useMediaQuery, useTheme } from "@mui/material";
-import { Block, BlockTitle, Fab, Link, Sheet, Toolbar, ToolbarPane } from "konsta/react";
+import { Block, BlockTitle, Button, Fab, Link, Sheet, Toolbar, ToolbarPane } from "konsta/react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
@@ -21,10 +21,16 @@ export default function MemberList() {
   const theme = useTheme()
   const is_mobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-  const [ sheet_opened, setSheetOpened ] = useState(false);
-  const [ sheet_form, updateSheetForm ] = useImmer({
+  const [ new_member_sheet_opened, setNewMemberSheetOpened ] = useState(false);
+  const [ new_member_sheet_form, updateNewMemberSheetForm ] = useImmer({
     name: '',
     pronouns: '',
+    description: '',
+  });
+
+  const [ new_folder_sheet_opened, setNewFolderSheetOpened ] = useState(false);
+  const [ new_folder_sheet_form, updateNewFolderSheetForm ] = useImmer({
+    name: '',
     description: '',
   });
 
@@ -41,15 +47,63 @@ export default function MemberList() {
     },
   );
 
-  const { data: members } = useShortQuery(
-    ["members", account?.id],
+  const [ in_folder, setInFolder ] = useState<string[]>([]);
+  const { data: folders } = useShortQuery(
+    ['folders', account?.id, in_folder],
     async () => {
-      const { data } = await supabase
-        .from('members')
-        .select()
-        .eq('account', account!.id)
-        .eq('is_status', false);
-      return data;
+      if (in_folder.at(-1)) {
+        const { data } = await supabase
+          .from('folders')
+          .select()
+          .eq('subfolder_of', in_folder.at(-1) ?? '');
+        return data;
+      } else {
+        const { data } = await supabase
+          .from('folders')
+          .select()
+          .is('subfolder_of', null);
+        return data;
+      }
+    },
+    [ account ],
+  );
+
+  const folder_mutators = useShortMutations(
+    ['folders', account?.id, in_folder],
+    {
+      create: async () => {
+        const { error } = await supabase
+          .from('folders')
+          .insert({
+            account: account!.id,
+            name: new_folder_sheet_form.name,
+            description: new_folder_sheet_form.description,
+            subfolder_of: in_folder?.at(-1) ?? null,
+          });
+        if (error) console.error(error);
+      }
+    }
+  )
+
+  const { data: members } = useShortQuery(
+    ["members", account?.id, in_folder],
+    async () => {
+      console.log('refetch', ['members', account?.id, in_folder]);
+      if (in_folder.at(-1)) {
+        const { error, data: folder_members } = await supabase
+          .from('folder_members')
+          .select('folder, member ( * )')
+          .eq('folder', in_folder.at(-1) ?? '');
+        if (error) console.error(['members', account?.id, in_folder], error);
+        return folder_members?.map(fm => fm.member) ?? [];
+      } else {
+        const { data } = await supabase
+          .from('members')
+          .select()
+          .eq('account', account!.id)
+          .eq('is_status', false);
+        return data;
+      }
     },
     [ account ],
   );
@@ -64,7 +118,7 @@ export default function MemberList() {
           .insert({
             id: nanoid(),
             account: account!.id,
-            ...sheet_form,
+            ...new_member_sheet_form,
             color: '255, 255, 255',
           });
       }
@@ -84,6 +138,7 @@ export default function MemberList() {
     },
     [ account ],
   );
+
 
   // @ts-expect-error Strictness is making short mutations not work anymore
   const front_mutations = useShortMutations<FrontMutators>(
@@ -126,29 +181,29 @@ export default function MemberList() {
       <Fab
         className="fixed right-safe-4 bottom-safe-16"
         icon={<Add/>}
-        onClick={() => setSheetOpened(true)}
+        onClick={() => setNewMemberSheetOpened(true)}
       />
       <Sheet
         className="pb-safe"
-        opened={sheet_opened}
-        onBackdropClick={() => setSheetOpened(false)}
+        opened={new_member_sheet_opened}
+        onBackdropClick={() => setNewMemberSheetOpened(false)}
         style={{ zIndex: 1400, maxWidth: '500px', left: is_mobile ? '0' : '40%' }}
       >
         <Toolbar top className="justify-end">
           <ToolbarPane>
-            <Link iconOnly onClick={() => setSheetOpened(false)}>
+            <Link iconOnly onClick={() => setNewMemberSheetOpened(false)}>
               <Close/>
             </Link>
           </ToolbarPane>
           <ToolbarPane>
             <Link iconOnly onClick={() => {
               member_mutations.add();
-              updateSheetForm(draft => {
+              updateNewMemberSheetForm(draft => {
                 draft.name = '';
                 draft.pronouns = '';
                 draft.description = '';
               })
-              setSheetOpened(false);
+              setNewMemberSheetOpened(false);
             }}>
               <Check/>
             </Link>
@@ -161,16 +216,16 @@ export default function MemberList() {
               label="Name"
               variant="outlined"
               sx={{ width: '100%' }}
-              value={sheet_form.name}
-              onChange={ev => updateSheetForm(draft => { draft.name = ev.target.value })}
+              value={new_member_sheet_form.name}
+              onChange={ev => updateNewMemberSheetForm(draft => { draft.name = ev.target.value })}
             />
             <TextField
               id="member-pronouns"
               label="Pronouns"
               variant="outlined"
               sx={{ width: '100%' }}
-              value={sheet_form.pronouns}
-              onChange={ev => updateSheetForm(draft => { draft.pronouns = ev.target.value })}
+              value={new_member_sheet_form.pronouns}
+              onChange={ev => updateNewMemberSheetForm(draft => { draft.pronouns = ev.target.value })}
             />
             <TextField multiline
               id="member-description"
@@ -178,14 +233,103 @@ export default function MemberList() {
               variant="outlined"
               minRows={3}
               sx={{ width: '100%' }}
-              value={sheet_form.description}
-              onChange={ev => updateSheetForm(draft => { draft.description = ev.target.value })}
+              value={new_member_sheet_form.description}
+              onChange={ev => updateNewMemberSheetForm(draft => { draft.description = ev.target.value })}
+            />
+          </Stack>
+        </Block>
+      </Sheet>
+      <Sheet
+        className="pb-safe"
+        opened={new_folder_sheet_opened}
+        onBackdropClick={() => setNewFolderSheetOpened(false)}
+        style={{ zIndex: 1400, maxWidth: '500px', left: is_mobile ? '0' : '40%' }}
+      >
+        <Toolbar top className="justify-end">
+          <ToolbarPane>
+            <Link iconOnly onClick={() => setNewFolderSheetOpened(false)}>
+              <Close/>
+            </Link>
+          </ToolbarPane>
+          <ToolbarPane>
+            <Link iconOnly onClick={() => {
+              folder_mutators.create();
+              updateNewFolderSheetForm(draft => {
+                draft.name = '';
+                draft.description = '';
+              })
+              setNewFolderSheetOpened(false);
+            }}>
+              <Check/>
+            </Link>
+          </ToolbarPane>
+        </Toolbar>
+        <Block>
+          <Stack gap={2}>
+            <TextField
+              label="Name"
+              variant="outlined"
+              sx={{ width: '100%' }}
+              value={new_folder_sheet_form.name}
+              onChange={ev => updateNewFolderSheetForm(draft => { draft.name = ev.target.value })}
+            />
+            <TextField multiline
+              label="Description"
+              variant="outlined"
+              minRows={3}
+              sx={{ width: '100%' }}
+              value={new_folder_sheet_form.description}
+              onChange={ev => updateNewFolderSheetForm(draft => { draft.description = ev.target.value })}
             />
           </Stack>
         </Block>
       </Sheet>
       <Block>
-        <BlockTitle style={{ marginBottom: 1 }}>All members</BlockTitle>
+        {(in_folder?.length ?? 0) > 0 && <Button
+          onClick={() => setInFolder(inf => inf.slice(0, -1))}
+        >
+          <ArrowLeft/> Go back
+        </Button> }
+        <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
+          <BlockTitle className="mt-0 mb-0">Folders</BlockTitle>
+          <Stack direction="row">
+            <IconButton onClick={() => setNewFolderSheetOpened(true)}>
+              <CreateNewFolder/>
+            </IconButton>
+            <IconButton onClick={() => router.push(`/app/folders/${in_folder.at(-1)}`)}>
+              <Settings/>
+            </IconButton>
+          </Stack>
+        </Stack>
+        <List>
+          { folders?.map(folder => {
+            return (
+              <ListItem
+                key={folder.id}
+                style={{
+                  backgroundColor: `rgba(${folder.color ?? '255, 255, 255'}, 20%)`,
+                  borderRadius: '10px',
+                  marginBottom: 5,
+                }}
+              >
+                <ListItemButton
+                  onClick={() => setInFolder(inf => [...(inf ?? []), folder.id])}
+                >
+                  <ListItemAvatar>
+                    <Folder/>
+                  </ListItemAvatar>
+                  <ListItemText
+                    primary={folder.name}
+                    secondary={folder.description}
+                  />
+                </ListItemButton>
+              </ListItem>
+            );
+          }) }
+        </List>
+      </Block>
+      <Block>
+        <BlockTitle style={{ marginBottom: 1 }}>{in_folder ? `Members in folder` : "All members"}</BlockTitle>
         <List>
           { ordered_members?.map(member => {
             const is_fronting = active_fronts?.find(fr => fr.member === member.id);

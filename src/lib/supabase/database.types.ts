@@ -231,6 +231,78 @@ export type Database = {
           },
         ]
       }
+      folder_members: {
+        Row: {
+          folder: string
+          member: string
+        }
+        Insert: {
+          folder: string
+          member?: string
+        }
+        Update: {
+          folder?: string
+          member?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "folder_members_folder_fkey"
+            columns: ["folder"]
+            isOneToOne: false
+            referencedRelation: "folders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "folder_members_member_fkey"
+            columns: ["member"]
+            isOneToOne: false
+            referencedRelation: "members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      folders: {
+        Row: {
+          account: string
+          color: string | null
+          description: string | null
+          id: string
+          name: string | null
+          subfolder_of: string | null
+        }
+        Insert: {
+          account: string
+          color?: string | null
+          description?: string | null
+          id?: string
+          name?: string | null
+          subfolder_of?: string | null
+        }
+        Update: {
+          account?: string
+          color?: string | null
+          description?: string | null
+          id?: string
+          name?: string | null
+          subfolder_of?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "folders_account_fkey"
+            columns: ["account"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "folders_subfolder_of_fkey"
+            columns: ["subfolder_of"]
+            isOneToOne: false
+            referencedRelation: "folders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       friends: {
         Row: {
           accepted: boolean

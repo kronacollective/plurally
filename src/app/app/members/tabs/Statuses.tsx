@@ -48,7 +48,6 @@ export default function Statuses() {
     [ account ],
   );
 
-
   const status_mutations = useShortMutations(
     ["statuses", account?.id],
     {
