@@ -7,7 +7,6 @@ import { useRouter } from "next/navigation";
 import { Updater } from "use-immer";
 
 export default function SettingsFolderDisplay({
-  folder,
   folder_mutators,
   folder_state,
   updateFolderState,

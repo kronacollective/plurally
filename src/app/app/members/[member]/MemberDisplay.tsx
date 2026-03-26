@@ -85,6 +85,18 @@ export default function MemberDisplay({
           .update({ avatar: url })
           .eq('id', member_id);
       },
+      archiveMember: async () => {
+        await supabase
+          .from('members')
+          .update({ archived: true })
+          .eq('id', member_id);
+      },
+      unarchiveMember: async () => {
+        await supabase
+          .from('members')
+          .update({ archived: false })
+          .eq('id', member_id);
+      }
     }
   );
 

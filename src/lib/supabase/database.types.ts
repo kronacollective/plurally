@@ -381,6 +381,7 @@ export type Database = {
       members: {
         Row: {
           account: string | null
+          archived: boolean
           avatar: string | null
           color: string
           created_at: string
@@ -392,6 +393,7 @@ export type Database = {
         }
         Insert: {
           account?: string | null
+          archived?: boolean
           avatar?: string | null
           color?: string
           created_at?: string
@@ -403,6 +405,7 @@ export type Database = {
         }
         Update: {
           account?: string | null
+          archived?: boolean
           avatar?: string | null
           color?: string
           created_at?: string

@@ -1,7 +1,7 @@
 import { useShortMutations, useShortQuery } from "@/lib/hooks/useShortQuery";
 import { useSupabase } from "@/lib/supabase/client";
-import { Add, ArrowDownward, ArrowLeft, ArrowUpward, Check, Close, CreateNewFolder, Folder, Settings } from "@mui/icons-material";
-import { IconButton, List, ListItem, ListItemAvatar, ListItemButton, ListItemText, Stack, TextField, useMediaQuery, useTheme } from "@mui/material";
+import { Add, Archive, ArrowDownward, ArrowLeft, ArrowUpward, Check, Close, CreateNewFolder, Folder, Settings } from "@mui/icons-material";
+import { Accordion, AccordionDetails, AccordionSummary, IconButton, List, ListItem, ListItemAvatar, ListItemButton, ListItemText, Stack, TextField, useMediaQuery, useTheme } from "@mui/material";
 import { Block, BlockTitle, Button, Fab, Link, Sheet, Toolbar, ToolbarPane } from "konsta/react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -48,6 +48,7 @@ export default function MemberList() {
   );
 
   const [ in_folder, setInFolder ] = useState<string[]>([]);
+  const [ in_archive, setInArchive ] = useState<boolean>(false);
   const { data: folders } = useShortQuery(
     ['folders', account?.id, in_folder],
     async () => {
@@ -88,7 +89,6 @@ export default function MemberList() {
   const { data: members } = useShortQuery(
     ["members", account?.id, in_folder],
     async () => {
-      console.log('refetch', ['members', account?.id, in_folder]);
       if (in_folder.at(-1)) {
         const { error, data: folder_members } = await supabase
           .from('folder_members')
@@ -170,11 +170,17 @@ export default function MemberList() {
     const sleeping_members = members?.filter(member => !active_fronts?.find(afr => afr.member === member.id));
     const alphabetical_fronting_members = fronting_members?.toSorted((a, b) => a.name?.localeCompare(b.name!) ?? 0) ?? [];
     const alphabetical_sleeping_members = sleeping_members?.toSorted((a, b) => a.name?.localeCompare(b.name!) ?? 0) ?? [];
-    return [
+    const ordered_members = [
       ...alphabetical_fronting_members,
       ...alphabetical_sleeping_members,
     ];
+    const ordered_members_without_archived = ordered_members.filter(om => !om.archived);
+    return ordered_members_without_archived;
   }, [active_fronts, members]);
+
+  const archived_members = useMemo(() => {
+    return members?.filter(m => m.archived);
+  }, [members]);
 
   return (
     <>
@@ -290,7 +296,12 @@ export default function MemberList() {
         >
           <ArrowLeft/> Go back
         </Button> }
-        <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
+        {in_archive && <Button
+          onClick={() => setInArchive(false)}
+        >
+          <ArrowLeft/> Go back
+        </Button> }
+        {!in_archive && <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
           <BlockTitle className="mt-0 mb-0">Folders</BlockTitle>
           <Stack direction="row">
             <IconButton onClick={() => setNewFolderSheetOpened(true)}>
@@ -300,9 +311,30 @@ export default function MemberList() {
               <Settings/>
             </IconButton>
           </Stack>
-        </Stack>
+        </Stack> }
         <List>
-          { folders?.map(folder => {
+          { (archived_members?.length ?? 0) > 0 && !in_archive && (
+            <ListItem
+              style={{
+                backgroundColor: `rgba(200, 200, 200, 20%)`,
+                borderRadius: '10px',
+                marginBottom: 5,
+              }}
+            >
+              <ListItemButton
+                onClick={() => setInArchive(true)}
+              >
+                <ListItemAvatar>
+                  <Archive/>
+                </ListItemAvatar>
+                <ListItemText
+                  primary="Archive"
+                  secondary="See archived members"
+                />
+              </ListItemButton>
+            </ListItem>
+          )}
+          { !in_archive && folders?.map(folder => {
             return (
               <ListItem
                 key={folder.id}
@@ -331,7 +363,7 @@ export default function MemberList() {
       <Block>
         <BlockTitle style={{ marginBottom: 1 }}>{in_folder ? `Members in folder` : "All members"}</BlockTitle>
         <List>
-          { ordered_members?.map(member => {
+          { (in_archive ? archived_members : ordered_members)?.map(member => {
             const is_fronting = active_fronts?.find(fr => fr.member === member.id);
             return (
               <ListItem
