@@ -308,9 +308,9 @@ export default function MemberList() {
             <IconButton onClick={() => setNewFolderSheetOpened(true)}>
               <CreateNewFolder/>
             </IconButton>
-            <IconButton onClick={() => router.push(`/app/folders/${in_folder.at(-1)}`)}>
+            {in_folder.at(-1) && <IconButton onClick={() => router.push(`/app/folders/${in_folder.at(-1)}`)}>
               <Settings/>
-            </IconButton>
+            </IconButton> }
             <IconButton onClick={() => {setFoldersCollapsed(fc => !fc)}}>
               { folders_collapsed ? <ExpandMore/> : <ExpandLess/> }
             </IconButton>
