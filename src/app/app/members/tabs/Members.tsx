@@ -57,13 +57,15 @@ export default function MemberList() {
         const { data } = await supabase
           .from('folders')
           .select()
-          .eq('subfolder_of', in_folder.at(-1) ?? '');
+          .eq('subfolder_of', in_folder.at(-1) ?? '')
+          .eq('account', account!.id);
         return data;
       } else {
         const { data } = await supabase
           .from('folders')
           .select()
-          .is('subfolder_of', null);
+          .is('subfolder_of', null)
+          .eq('account', account!.id);
         return data;
       }
     },
