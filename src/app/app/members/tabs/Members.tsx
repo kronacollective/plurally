@@ -1,6 +1,6 @@
 import { useShortMutations, useShortQuery } from "@/lib/hooks/useShortQuery";
 import { useSupabase } from "@/lib/supabase/client";
-import { Add, Archive, ArrowDownward, ArrowLeft, ArrowUpward, Check, Close, CreateNewFolder, Folder, Settings } from "@mui/icons-material";
+import { Add, Archive, ArrowDownward, ArrowLeft, ArrowUpward, Check, Close, CreateNewFolder, ExpandLess, ExpandMore, Folder, Settings } from "@mui/icons-material";
 import { Accordion, AccordionDetails, AccordionSummary, IconButton, List, ListItem, ListItemAvatar, ListItemButton, ListItemText, Stack, TextField, useMediaQuery, useTheme } from "@mui/material";
 import { Block, BlockTitle, Button, Fab, Link, Sheet, Toolbar, ToolbarPane } from "konsta/react";
 import Image from "next/image";
@@ -49,6 +49,7 @@ export default function MemberList() {
 
   const [ in_folder, setInFolder ] = useState<string[]>([]);
   const [ in_archive, setInArchive ] = useState<boolean>(false);
+  const [ folders_collapsed, setFoldersCollapsed ] = useState<boolean>(false);
   const { data: folders } = useShortQuery(
     ['folders', account?.id, in_folder],
     async () => {
@@ -310,9 +311,12 @@ export default function MemberList() {
             <IconButton onClick={() => router.push(`/app/folders/${in_folder.at(-1)}`)}>
               <Settings/>
             </IconButton>
+            <IconButton onClick={() => {setFoldersCollapsed(fc => !fc)}}>
+              { folders_collapsed ? <ExpandMore/> : <ExpandLess/> }
+            </IconButton>
           </Stack>
         </Stack> }
-        <List>
+        { !folders_collapsed && <List>
           { (archived_members?.length ?? 0) > 0 && !in_archive && (
             <ListItem
               style={{
@@ -358,7 +362,7 @@ export default function MemberList() {
               </ListItem>
             );
           }) }
-        </List>
+        </List> }
       </Block>
       <Block>
         <BlockTitle style={{ marginBottom: 1 }}>{in_folder ? `Members in folder` : "All members"}</BlockTitle>
