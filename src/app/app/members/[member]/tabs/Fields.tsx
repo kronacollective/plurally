@@ -2,7 +2,7 @@ import { Avatar, List, ListItem, Stack, TextField, useMediaQuery, useTheme } fro
 import { Block, Fab, Link, Sheet, Toolbar, ToolbarPane } from "konsta/react";
 import Image from "next/image";
 import { Json, Tables } from '../../../../../lib/supabase/database.types';
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Check, Close, Edit, Save } from "@mui/icons-material";
 import { MuiColorInput } from "mui-color-input";
 import { Updater } from "use-immer";
@@ -89,13 +89,22 @@ export default function FieldsMemberDisplay({
           });
       }
     }
-  )
+  );
+
+  const sorted_fields = useMemo(() => {
+    const filled_fields = fields?.filter(field => fields_and_values?.find(fav => fav.field.id === field.id && fav.member === member.id)?.value) ?? [];
+    const empty_fields = fields?.filter(field => !fields_and_values?.find(fav => fav.field.id === field.id && fav.member === member.id)?.value) ?? [];
+    return [
+      ...filled_fields,
+      ...empty_fields,
+    ];
+  }, [fields, fields_and_values, member.id]);
 
   return (
     <>
       <Stack gap={2} display="flex" sx={{ width: '100%', justifyContent: 'center', alignItems: 'center' }}>
         <List sx={{ width: '90%' }}>
-        { fields?.map(field => {
+        { sorted_fields?.map(field => {
           const fav = fields_and_values?.find(fav => fav.field.id === field.id && fav.member === member.id);
           return (
             <ListItem key={`${field.id}-${member.id}`}
