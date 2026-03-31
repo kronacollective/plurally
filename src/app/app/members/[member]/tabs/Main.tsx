@@ -46,11 +46,25 @@ export default function MainMemberDisplay({
   const [ avatar_sheet_open, setAvatarSheetOpen ] = useState(false);
 
   const uploadAvatar = useCallback(async () => {
-    const path = `${member.id}.${mime.getExtension(avatar_file!.type)}`;
-    await supabase.storage
+    // Locate old file
+    const { data: old_file } = await supabase
+      .storage
+      .from('avatars')
+      .list('', {
+        limit: 1,
+        search: member.id
+      });
+    // Remove old file
+    await supabase.storage.from('avatars').remove([old_file?.[0].name ?? '']);
+    // Upload new file
+    const path = `${member.id}-${new Date().getTime()}.${mime.getExtension(avatar_file!.type)}`;
+    const { error } = await supabase.storage
       .from('avatars')
       .upload(path, avatar_file!, {upsert: true});
+    if (error) console.error('uploadAvatar', error);
+    // Get public URL for new file
     const { data } = await supabase.storage.from('avatars').getPublicUrl(path);
+    // Update avatar URL
     member_mutations.updateAvatar(data.publicUrl);
   }, [avatar_file, member.id, member_mutations, supabase.storage]);
 
