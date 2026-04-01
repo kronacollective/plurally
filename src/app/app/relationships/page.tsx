@@ -2,8 +2,9 @@
 import useAccount from "@/lib/hooks/useAccount"
 import { useShortQuery } from "@/lib/hooks/useShortQuery"
 import { useSupabase } from "@/lib/supabase/client";
+import dynamic from "next/dynamic";
 import { useMemo } from "react";
-import ForceGraph2D from 'react-force-graph-2d';
+const ForceGraph2D = dynamic(() => import('react-force-graph-2d'), { ssr: false });
 
 const getContrastYIQ = (r: number, g: number, b: number) => {
   // const r = parseInt(hexcolor.substring(1,3),16);
@@ -12,8 +13,6 @@ const getContrastYIQ = (r: number, g: number, b: number) => {
   const yiq = ((r*299)+(g*587)+(b*114))/1000;
   return (yiq >= 128) ? 'black' : 'white';
 }
-
-
 
 export default function RelationshipsPage() {
   const supabase = useSupabase();
