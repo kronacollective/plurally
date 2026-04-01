@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { useImmer } from "use-immer";
 import { nanoid } from 'nanoid';
+import useAccount from "@/lib/hooks/useAccount";
 
 type FrontMutators = {
   front: (member_id: string) => Promise<void>,
@@ -34,18 +35,7 @@ export default function MemberList() {
     description: '',
   });
 
-  const { data: account } = useShortQuery(
-    ["account"],
-    async () => {
-      const { data: user } = await supabase.auth.getUser();
-      const { data: account } = await supabase
-        .from('accounts')
-        .select()
-        .eq('user', user.user!.id)
-        .single();
-      return account;
-    },
-  );
+  const { data: account } = useAccount();
 
   const [ in_folder, setInFolder ] = useState<string[]>([]);
   const [ in_archive, setInArchive ] = useState<boolean>(false);
@@ -104,7 +94,8 @@ export default function MemberList() {
           .from('members')
           .select()
           .eq('account', account!.id)
-          .eq('is_status', false);
+          .eq('is_status', false)
+          .is('member_of', null);
         return data;
       }
     },

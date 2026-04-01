@@ -388,6 +388,7 @@ export type Database = {
           description: string | null
           id: string
           is_status: boolean
+          member_of: string | null
           name: string | null
           pronouns: string | null
         }
@@ -400,6 +401,7 @@ export type Database = {
           description?: string | null
           id: string
           is_status?: boolean
+          member_of?: string | null
           name?: string | null
           pronouns?: string | null
         }
@@ -412,6 +414,7 @@ export type Database = {
           description?: string | null
           id?: string
           is_status?: boolean
+          member_of?: string | null
           name?: string | null
           pronouns?: string | null
         }
@@ -421,6 +424,13 @@ export type Database = {
             columns: ["account"]
             isOneToOne: false
             referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "members_member_of_fkey"
+            columns: ["member_of"]
+            isOneToOne: false
+            referencedRelation: "members"
             referencedColumns: ["id"]
           },
         ]

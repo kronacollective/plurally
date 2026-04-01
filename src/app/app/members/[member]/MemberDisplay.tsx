@@ -25,6 +25,9 @@ type MemberMutations = {
   update: () => Promise<void>,
   deleteMember: () => Promise<void>,
   updateAvatar: (url: string) => Promise<void>,
+  archiveMember: () => Promise<void>,
+  unarchiveMember: () => Promise<void>,
+  updateMemberOf: (member_of: string | null) => Promise<void>,
 };
 
 export default function MemberDisplay({
@@ -96,6 +99,12 @@ export default function MemberDisplay({
           .from('members')
           .update({ archived: false })
           .eq('id', member_id);
+      },
+      updateMemberOf: async (member_of: string | null) => {
+        await supabase
+          .from('members')
+          .update({ member_of })
+          .eq('id', member_id);
       }
     }
   );
@@ -105,7 +114,7 @@ export default function MemberDisplay({
 
   return !member ? <></> : (
     <Stack gap={2} display="flex" sx={{ width: '100%', justifyContent: 'center', alignItems: 'center' }}>
-      <div className="mb-16" style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
+      <div className="mb-16" style={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
         <Tab
           member={member}
           member_mutations={member_mutations}
