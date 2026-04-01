@@ -216,7 +216,7 @@ export default function MainMemberDisplay({
             label="Name"
             variant="outlined"
             // defaultValue={member?.name}
-            value={member_state.name}
+            value={member_state.name ?? ''}
             onChange={ev => updateMemberState(draft => { draft.name = ev.target.value })}
             sx={{ width: '100%' }}
           />
@@ -225,7 +225,7 @@ export default function MainMemberDisplay({
             label="Pronouns"
             variant="outlined"
             // defaultValue={member?.pronouns}
-            value={member_state.pronouns}
+            value={member_state.pronouns ?? ''}
             onChange={ev => updateMemberState(draft => { draft.pronouns = ev.target.value })}
             sx={{ width: '100%' }}
           />}
@@ -234,7 +234,7 @@ export default function MainMemberDisplay({
             label="Description"
             variant="outlined"
             // defaultValue={member?.description}
-            value={member_state.description}
+            value={member_state.description ?? ''}
             onChange={ev => updateMemberState(draft => { draft.description = ev.target.value })}
             minRows={3}
             sx={{ width: '100%' }}
