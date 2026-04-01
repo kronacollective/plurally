@@ -1,18 +1,18 @@
-import { Avatar, IconButton, List, ListItem, ListItemAvatar, ListItemButton, ListItemText, Stack, TextField, useMediaQuery, useTheme } from "@mui/material";
+import { Avatar, IconButton, List, ListItem, ListItemAvatar, ListItemButton, ListItemText, MenuItem, Select, Stack, TextField, useMediaQuery, useTheme } from "@mui/material";
 import { Block, BlockTitle, Button, Fab, Link, Sheet, Toolbar, ToolbarPane } from "konsta/react";
 import Image from "next/image";
 import { Tables } from '../../../../../lib/supabase/database.types';
 import { useCallback, useMemo, useState } from "react";
-import { ArrowDownward, ArrowUpward, Check, Close, Save } from "@mui/icons-material";
+import { Add, ArrowDownward, ArrowUpward, Check, Close, Delete, Save, SwapVert } from "@mui/icons-material";
 import { MuiColorInput } from "mui-color-input";
 import { Updater } from "use-immer";
 import { useFilePicker } from 'use-file-picker';
 import { useSupabase } from "@/lib/supabase/client";
 import mime from 'mime';
 import { useShortMutations, useShortQuery } from "@/lib/hooks/useShortQuery";
-import Account from "@/app/app/account/page";
 import useAccount from "@/lib/hooks/useAccount";
 import { useRouter } from "next/navigation";
+import EditableMarkdownField from "@/app/components/EditableMarkdownField";
 
 const AVATAR_SIZES = [300, 300];
 
@@ -20,6 +20,13 @@ type FrontMutators = {
   front: (member_id: string) => Promise<void>,
   unfront: (member_id: string) => Promise<void>
 };
+
+type RelationshipMutators = {
+  create: () => Promise<void>,
+  update: (id: string, field: string, value: string | null) => Promise<void>,
+  delete: (id: string) => Promise<void>,
+  swap: (rel: Tables<'relationships'>) => Promise<void>,
+}
 
 export default function MainMemberDisplay({
   member,
@@ -91,7 +98,7 @@ export default function MainMemberDisplay({
       return data;
     },
   );
-  
+
   // Get active fronts
   const { data: active_fronts } = useShortQuery(
     ["fronts", account?.id, "active"],
@@ -145,6 +152,82 @@ export default function MainMemberDisplay({
         }
       }
     },
+  );
+
+  // Get relationships
+  const { data: relationships } = useShortQuery(
+    ['relationships', member.id],
+    async () => {
+      const { data } = await supabase
+        .from('relationships')
+        .select('*,origin_member:members!origin_member(*),target_member:members!target_member(*)')
+        .or(`origin_member.eq.${member.id},target_member.eq.${member.id}`);
+      return data;
+    },
+  );
+
+  // @ts-expect-error: bad
+  const relationship_mutators = useShortMutations<RelationshipMutators>(
+    ['relationships'],
+    {
+      create: async () => {
+        await supabase
+          .from('relationships')
+          .insert({
+            origin_member: member.id,
+            target_type: 'member',
+          });
+      },
+      update: async (id: string, field: string, value: string | null) => {
+        await supabase
+          .from('relationships')
+          .update({ [field]: value })
+          .eq('id', id);
+      },
+      delete: async (id: string) => {
+        await supabase
+          .from('relationships')
+          .delete()
+          .eq('id', id);
+      },
+      swap: async (rel: Tables<'relationships'>) => {
+        console.log('swap', rel);
+        const { error } = await supabase
+          .from('relationships')
+          .update({
+            // @ts-expect-error: rel is unsufficiently typed
+            origin_member: rel.target_member?.id,
+            origin_arbitrary: rel.target_arbitrary,
+            origin_label: rel.target_label,
+            origin_type: rel.target_type,
+            // @ts-expect-error: rel is unsufficiently typed
+            target_member: rel.origin_member?.id,
+            target_arbitrary: rel.origin_arbitrary,
+            target_label: rel.origin_label,
+            target_type: rel.origin_type,
+          })
+          .eq('id', rel.id);
+        if (error) console.error('swap', error);
+      }
+    }
+  );
+
+  // Get selectable members for relationships
+  const { data: selectable_members } = useShortQuery(
+    ['members', account?.id, 'selectable'],
+    async () => {
+      // Fetch data
+      const { data } = await supabase
+        .from('members')
+        .select()
+        .eq('account', account!.id)
+        .neq('id', member.id)
+        .eq('is_status', false);
+      // Sort data
+      const alphabetical_members = data?.toSorted((a, b) => a.name?.localeCompare(b.name!) ?? 0) ?? [];
+      // Return
+      return alphabetical_members;
+    }
   );
 
   return (
@@ -250,6 +333,193 @@ export default function MainMemberDisplay({
           />
         </Stack>
       </Block>
+      <BlockTitle>Relationships</BlockTitle>
+      <Block>
+        <Stack>
+          <List>
+            { relationships?.map(rel => {
+              return (
+                <ListItem key={rel.id} sx={{
+                  backgroundColor: `rgba(${member.color ?? '255, 255, 255'}, 20%)`,
+                  borderRadius: '10px',
+                  marginBottom: 2,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                  <Stack sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }} spacing={2}>
+                    <Stack spacing={2} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      { rel.origin_member?.id === member.id
+                        ? member.name
+                        : (
+                          <>
+                            <Select
+                              value={rel.origin_type ?? 'member'}
+                              onChange={ev => relationship_mutators.update(rel.id, 'origin_type', ev.target.value ?? 'member')}
+                            >
+                              <MenuItem value="member">Member</MenuItem>
+                              <MenuItem value="arbitrary">Arbitrary value</MenuItem>
+                              <MenuItem value="external">External member</MenuItem>
+                            </Select>
+                            { rel.origin_type === 'member' && (
+                              <Select
+                                id="member"
+                                value={rel.origin_member?.id ?? null}
+                                onChange={ev => relationship_mutators.update(rel.id, 'origin_member', ev.target.value ?? null)}
+                                sx={{ width: '10em' }}
+                              >
+                                { selectable_members?.map(smember => {
+                                  return (
+                                    <MenuItem key={smember.id} value={smember.id}>
+                                      <ListItem sx={{ p: 0 }}>
+                                        <ListItemAvatar>
+                                          { smember && smember.avatar ? (
+                                            <Image
+                                              className="rounded-full"
+                                              src={smember.avatar}
+                                              width={25}
+                                              height={25}
+                                              alt="Profile picture"
+                                            />
+                                          ) : '?' }
+                                        </ListItemAvatar>
+                                        <ListItemText
+                                          primary={smember.name}
+                                          secondary={smember.pronouns}
+                                        />
+                                      </ListItem>
+                                    </MenuItem>
+                                  )
+                                }) }
+                              </Select>
+                            ) }
+                            { rel.origin_type === 'external' && (
+                              <EditableMarkdownField
+                                label="Member ID"
+                                value={rel.origin_member?.id ?? ''}
+                                onSave={nomi => relationship_mutators.update(rel.id, 'origin_member', nomi)}
+                              />
+                            ) }
+                            { rel.origin_type === 'arbitrary' && (
+                              <EditableMarkdownField
+                                label="Value"
+                                value={rel.target_arbitrary ?? ''}
+                                onSave={noa => relationship_mutators.update(rel.id, 'origin_arbitrary', noa)}
+                              />
+                            ) }
+                          </>
+                        )
+                      }
+                      <EditableMarkdownField
+                        label="Is"
+                        value={rel.origin_label ?? ''}
+                        onSave={nol => relationship_mutators.update(rel.id, 'origin_label', nol)}
+                      />
+                    </Stack>
+                    <ArrowDownward/>
+                    <Stack direction="row" spacing={2}>
+                      <IconButton onClick={() => relationship_mutators.swap(rel)}>
+                        <SwapVert/>
+                      </IconButton>
+                      <div
+                        style={{
+                          backgroundColor: 'white',
+                          borderRadius: '10px',
+                          padding: '1em',
+                        }}
+                      >
+                        <EditableMarkdownField
+                          label="Relation"
+                          value={rel.label ?? ''}
+                          onSave={nl => relationship_mutators.update(rel.id, 'label', nl)}
+                        />
+                      </div>
+                    </Stack>
+                    <ArrowDownward/>
+                    <Stack sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }} spacing={2}>
+                      { rel.target_member?.id === member.id
+                        ? member.name
+                        : (
+                          <>
+                            <Select
+                              value={rel.target_type ?? 'member'}
+                              onChange={ev => relationship_mutators.update(rel.id, 'target_type', ev.target.value ?? 'member')}
+                            >
+                              <MenuItem value="member">Member</MenuItem>
+                              <MenuItem value="arbitrary">Arbitrary value</MenuItem>
+                              <MenuItem value="external">External member</MenuItem>
+                            </Select>
+                            { rel.target_type === 'member' && (
+                              <Select
+                                id="member"
+                                value={rel.target_member?.id ?? null}
+                                onChange={ev => relationship_mutators.update(rel.id, 'target_member', ev.target.value ?? null)}
+                                sx={{ width: '10em' }}
+                              >
+                                { selectable_members?.map(smember => {
+                                  return (
+                                    <MenuItem key={smember.id} value={smember.id}>
+                                      <ListItem sx={{ p: 0 }}>
+                                        <ListItemAvatar>
+                                          { smember && smember.avatar ? (
+                                            <Image
+                                              className="rounded-full"
+                                              src={smember.avatar}
+                                              width={25}
+                                              height={25}
+                                              alt="Profile picture"
+                                            />
+                                          ) : '?' }
+                                        </ListItemAvatar>
+                                        <ListItemText
+                                          primary={smember.name}
+                                          secondary={smember.pronouns}
+                                        />
+                                      </ListItem>
+                                    </MenuItem>
+                                  )
+                                }) }
+                              </Select>
+                            ) }
+                            { rel.target_type === 'external' && (
+                              <EditableMarkdownField
+                                label="Member ID"
+                                value={rel.target_member?.id ?? ''}
+                                onSave={ntmi => relationship_mutators.update(rel.id, 'target_member', ntmi)}
+                              />
+                            ) }
+                            { rel.target_type === 'arbitrary' && (
+                              <EditableMarkdownField
+                                label="Value"
+                                value={rel.target_arbitrary ?? ''}
+                                onSave={nta => relationship_mutators.update(rel.id, 'target_arbitrary', nta)}
+                              />
+                            ) }
+                          </>
+                        )
+                      }
+                      <EditableMarkdownField
+                        label="Is"
+                        value={rel.target_label ?? ''}
+                        onSave={ntl => relationship_mutators.update(rel.id, 'target_label', ntl)}
+                      />
+                    </Stack>
+                    <Button
+                      className="bg-red-700"
+                      onClick={() => relationship_mutators.delete(rel.id)}
+                    >
+                      <Delete/> Delete relationship
+                    </Button>
+                  </Stack>
+                </ListItem>
+              )
+            }) }
+          </List>
+          <Button onClick={() => relationship_mutators.create()}>
+            <Add/> Add relationship
+          </Button>
+        </Stack>
+      </Block>
       <BlockTitle>Submembers</BlockTitle>
       <Block>
         <List>
@@ -304,6 +574,7 @@ export default function MainMemberDisplay({
       </Block>
       <Fab
         className="fixed bottom-safe-16 right-safe-4"
+        style={{ zIndex: 1500 }}
         icon={<Save/>}
         text="Save"
         textPosition="after"

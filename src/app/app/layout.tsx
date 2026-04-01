@@ -20,6 +20,7 @@ const TITLES = {
   '^/app/buckets/(.+)$': 'Bucket',
   '^/app/fields$': 'Fields',
   '^/app/friends$': 'Friends',
+  '^/app/relationships$': 'Relationships',
   '^/app/account$': 'Account',
   '^/app/account/create$': 'Create an account',
 };

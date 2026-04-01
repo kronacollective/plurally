@@ -435,6 +435,66 @@ export type Database = {
           },
         ]
       }
+      relationships: {
+        Row: {
+          directional: boolean
+          id: string
+          label: string | null
+          origin_arbitrary: string | null
+          origin_label: string | null
+          origin_member: string | null
+          origin_type: string | null
+          target_arbitrary: string | null
+          target_label: string | null
+          target_member: string | null
+          target_type: string | null
+          type: string | null
+        }
+        Insert: {
+          directional?: boolean
+          id?: string
+          label?: string | null
+          origin_arbitrary?: string | null
+          origin_label?: string | null
+          origin_member?: string | null
+          origin_type?: string | null
+          target_arbitrary?: string | null
+          target_label?: string | null
+          target_member?: string | null
+          target_type?: string | null
+          type?: string | null
+        }
+        Update: {
+          directional?: boolean
+          id?: string
+          label?: string | null
+          origin_arbitrary?: string | null
+          origin_label?: string | null
+          origin_member?: string | null
+          origin_type?: string | null
+          target_arbitrary?: string | null
+          target_label?: string | null
+          target_member?: string | null
+          target_type?: string | null
+          type?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "relationships_origin_member_fkey"
+            columns: ["origin_member"]
+            isOneToOne: false
+            referencedRelation: "members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "relationships_target_member_fkey"
+            columns: ["target_member"]
+            isOneToOne: false
+            referencedRelation: "members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       subscriptions: {
         Row: {
           account: string
