@@ -49,6 +49,19 @@ export default function MainMemberDisplay({
           minRows={3}
           sx={{ width: '90%' }}
         />
+        <TextField
+          name="id"
+          label="Member ID"
+          variant="outlined"
+          // defaultValue={member?.pronouns}
+          value={member.id}
+          sx={{ width: '90%' }}
+          slotProps={{
+            input: {
+              readOnly: true,
+            }
+          }}
+        />
       </Stack>
     </>
   )
