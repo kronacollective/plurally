@@ -78,6 +78,14 @@ export async function POST(request: Request, context: RouteContext<'/api/member/
     const visible_fronters_set = members_from_bfii_set.intersection(active_fronters_set);
     // Filter active fronts
     const visible_active_fronts = active_fronts?.filter(af => visible_fronters_set.has(af.member.id));
+    // Add notification to history
+    await supabase
+      .from('notifications')
+      .insert({
+        account: sub.account,
+        title: account?.display_name,
+        body: visible_active_fronts?.map(af => af.member.name).join(', '),
+      });
     // Send notification
     try {
       await webpush.sendNotification(

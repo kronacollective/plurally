@@ -3,11 +3,12 @@ import { useShortMutations, useShortQuery } from "@/lib/hooks/useShortQuery";
 import { useSupabase } from "@/lib/supabase/client";
 import { Tables } from "@/lib/supabase/database.types";
 import { Add, Check, Clear } from "@mui/icons-material";
-import { IconButton, List, ListItem, ListItemButton, ListItemText, Stack, TextField } from "@mui/material";
-import { Button } from "konsta/react";
+import { IconButton, List, ListItem, ListItemButton, ListItemText, Stack, TextField, Typography } from "@mui/material";
+import { Block, BlockTitle, Button } from "konsta/react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { getFriendFronters } from "./actions";
 import { useRouter } from "next/navigation";
+import { format } from "date-fns";
 
 type FriendshipMutators = {
   acceptIncomingRequest: (relating_id: string, related_id: string) => Promise<void>,
@@ -125,100 +126,134 @@ export default function Friends() {
     }
   );
 
+  // Get notifications
+  const { data: notifications } = useShortQuery(
+    ['notifications', account?.id],
+    async () => {
+      const { data } = await supabase
+        .from('notifications')
+        .select()
+        .eq('account', account!.id);
+      return data;
+    },
+  );
+
   return (
-    <Stack gap={2} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: 3 }}>
-      <Stack direction="row" gap={2} sx={{ width: '90%' }}>
-        <TextField
-          label="Friend's username"
-          variant="outlined"
-          value={username}
-          onChange={ev => setUsername(ev.target.value)}
-          sx={{ width: '90%' }}
-        />
-        <Button
-          onClick={friendship_mutators.addFriend}
-          disabled={account && username == ''}
-          style={{ height: '4em' }}
-        >
-          <Add/> Add friend
-        </Button>
-      </Stack>
-      <List sx={{ width: '90%' }}>
-        {incoming_requests?.map(req => {
-          return (
-            <ListItem key={`${req.relating.id}-${req.related.id}`}
-              style={{
-                backgroundColor: `rgba(${req.relating.color ?? '255, 255, 255'}, 35%)`,
-                borderRadius: '10px',
-                marginBottom: 5,
-                width: '100%',
-              }}
-              secondaryAction={
-                <Stack direction="row" gap={2}>
-                  <IconButton
-                    onClick={() => friendship_mutators.acceptIncomingRequest(req.relating.id, req.related.id)}
-                  >
-                    <Check/>
-                  </IconButton>
-                  <IconButton
-                    onClick={() => friendship_mutators.rejectIncomingRequest(req.relating.id, req.related.id)}
-                  >
-                    <Clear/>
-                  </IconButton>
-                </Stack>
-              }
-            >
-              <ListItemText
-                primary={`${req.relating.display_name} (${req.relating.username})`}
-                secondary="Incoming request"
-              />
-            </ListItem>
-          );
-        })}
-        {outgoing_requests?.map(req => {
-          return (
-            <ListItem key={`${req.relating.id}-${req.related.id}`}
-              style={{
-                backgroundColor: `rgba(${req.related.color ?? '255, 255, 255'}, 35%)`,
-                borderRadius: '10px',
-                marginBottom: 5,
-              }}
-            >
-              <ListItemText
-                primary={`${req.related.display_name} (${req.related.username})`}
-                secondary="Outgoing request"
-              />
-            </ListItem>
-          );
-        })}
-        {friends?.map(friendship => {
-          const are_we_relating = friendship.relating.id === account!.id;
-          return (
-            <ListItem key={`${friendship.relating.id}-${friendship.related.id}`}
-              style={{
-                backgroundColor: `rgba(${(are_we_relating ? friendship.related.color : friendship.relating.color) ?? '255, 255, 255'}, 35%)`,
-                borderRadius: '10px',
-                marginBottom: 5,
-              }}
-            >
-              <ListItemButton
-                onClick={() => router.push(`/app/friends/${are_we_relating ? friendship.related.id : friendship.relating.id}`)}
-              >
-                {are_we_relating
-                  ? (<ListItemText
-                      primary={`${friendship.related.display_name} (${friendship.related.username})`}
-                      secondary={friends_fronters[friendship.related.id]?.join(', ')}
-                    />)
-                  : (<ListItemText
-                      primary={`${friendship.relating.display_name} (${friendship.relating.username})`}
-                      secondary={friends_fronters[friendship.relating.id]?.join(', ')}
-                    />)
+    <Stack gap={2}>
+      <BlockTitle>Friends</BlockTitle>
+      <Block style={{ width: '100%' }}>
+        <Stack direction="row" gap={2} sx={{ width: '100%' }}>
+          <TextField
+            label="Friend's username"
+            variant="outlined"
+            value={username}
+            onChange={ev => setUsername(ev.target.value)}
+            sx={{ width: '90%' }}
+          />
+          <Button
+            onClick={friendship_mutators.addFriend}
+            disabled={account && username == ''}
+            style={{ height: '4em' }}
+          >
+            <Add/> Add friend
+          </Button>
+        </Stack>
+        <List sx={{ width: '100%' }}>
+          {incoming_requests?.map(req => {
+            return (
+              <ListItem key={`${req.relating.id}-${req.related.id}`}
+                style={{
+                  backgroundColor: `rgba(${req.relating.color ?? '255, 255, 255'}, 35%)`,
+                  borderRadius: '10px',
+                  marginBottom: 5,
+                  width: '100%',
+                }}
+                secondaryAction={
+                  <Stack direction="row" gap={2}>
+                    <IconButton
+                      onClick={() => friendship_mutators.acceptIncomingRequest(req.relating.id, req.related.id)}
+                    >
+                      <Check/>
+                    </IconButton>
+                    <IconButton
+                      onClick={() => friendship_mutators.rejectIncomingRequest(req.relating.id, req.related.id)}
+                    >
+                      <Clear/>
+                    </IconButton>
+                  </Stack>
                 }
-              </ListItemButton>
-            </ListItem>
-          );
-        })}
-      </List>
+              >
+                <ListItemText
+                  primary={`${req.relating.display_name} (${req.relating.username})`}
+                  secondary="Incoming request"
+                />
+              </ListItem>
+            );
+          })}
+          {outgoing_requests?.map(req => {
+            return (
+              <ListItem key={`${req.relating.id}-${req.related.id}`}
+                style={{
+                  backgroundColor: `rgba(${req.related.color ?? '255, 255, 255'}, 35%)`,
+                  borderRadius: '10px',
+                  marginBottom: 5,
+                }}
+              >
+                <ListItemText
+                  primary={`${req.related.display_name} (${req.related.username})`}
+                  secondary="Outgoing request"
+                />
+              </ListItem>
+            );
+          })}
+          {friends?.map(friendship => {
+            const are_we_relating = friendship.relating.id === account!.id;
+            return (
+              <ListItem key={`${friendship.relating.id}-${friendship.related.id}`}
+                style={{
+                  backgroundColor: `rgba(${(are_we_relating ? friendship.related.color : friendship.relating.color) ?? '255, 255, 255'}, 35%)`,
+                  borderRadius: '10px',
+                  marginBottom: 5,
+                }}
+              >
+                <ListItemButton
+                  onClick={() => router.push(`/app/friends/${are_we_relating ? friendship.related.id : friendship.relating.id}`)}
+                >
+                  {are_we_relating
+                    ? (<ListItemText
+                        primary={`${friendship.related.display_name} (${friendship.related.username})`}
+                        secondary={friends_fronters[friendship.related.id]?.join(', ')}
+                      />)
+                    : (<ListItemText
+                        primary={`${friendship.relating.display_name} (${friendship.relating.username})`}
+                        secondary={friends_fronters[friendship.relating.id]?.join(', ')}
+                      />)
+                  }
+                </ListItemButton>
+              </ListItem>
+            );
+          })}
+        </List>
+      </Block>
+      <BlockTitle>Notification history</BlockTitle>
+      <Block>
+        <List>
+          { notifications?.map(notif => {
+            return (
+              <ListItem key={notif.id}
+                secondaryAction={
+                  <Typography>{format(notif.created_at, 'hh:mm:ss b dd/LL/yyyy')}</Typography>
+                }
+              >
+                <ListItemText
+                  primary={notif.title}
+                  secondary={notif.body}
+                />
+              </ListItem>
+            )
+          }) }
+        </List>
+      </Block>
     </Stack>
   )
 }

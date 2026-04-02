@@ -68,7 +68,7 @@ export async function POST(request: Request, context: RouteContext<'/api/member/
       .select('buckets!bucket ( id, account ), account')
       .eq('account', sub.account) // friend is in bucket
       .eq('buckets.account', account!.id); // bucket owner is us
-    const buckets_friend_is_in = buckets_friend_is_in_data?.map(bfii => bfii.buckets.id);
+    const buckets_friend_is_in = buckets_friend_is_in_data?.map(bfii => bfii.buckets?.id);
     // Get all members from buckets friend is in
     const { data: members_from_bfii } = await supabase
       .from('bucket_members')
@@ -79,6 +79,14 @@ export async function POST(request: Request, context: RouteContext<'/api/member/
     const visible_fronters_set = members_from_bfii_set.intersection(active_fronters_set);
     // Filter active fronts
     const visible_active_fronts = active_fronts?.filter(af => visible_fronters_set.has(af.member.id));
+    // Add notification to history
+    await supabase
+      .from('notifications')
+      .insert({
+        account: sub.account,
+        title: account?.display_name,
+        body: visible_active_fronts?.map(af => af.member.name).join(', '),
+      });
     // Send notification
     try {
       await webpush.sendNotification(

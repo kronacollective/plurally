@@ -435,6 +435,38 @@ export type Database = {
           },
         ]
       }
+      notifications: {
+        Row: {
+          account: string
+          body: string | null
+          created_at: string
+          id: string
+          title: string | null
+        }
+        Insert: {
+          account: string
+          body?: string | null
+          created_at?: string
+          id?: string
+          title?: string | null
+        }
+        Update: {
+          account?: string
+          body?: string | null
+          created_at?: string
+          id?: string
+          title?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_account_fkey"
+            columns: ["account"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       relationships: {
         Row: {
           directional: boolean
