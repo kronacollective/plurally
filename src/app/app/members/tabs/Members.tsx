@@ -179,7 +179,7 @@ export default function MemberList() {
   return (
     <>
       <Fab
-        className="fixed right-safe-4 bottom-safe-16"
+        className="fixed left-safe-4 bottom-safe-16"
         style={{ zIndex: 1500 }}
         icon={<Add/>}
         onClick={() => setNewMemberSheetOpened(true)}
