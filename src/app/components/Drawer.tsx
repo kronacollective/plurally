@@ -3,7 +3,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import React from "react";
 import { Divider } from "@mui/material";
 import { useSupabase } from "@/lib/supabase/client";
-import { CoPresent, Dataset, Diversity2, Group, Link, Logout, TextFields, Timelapse } from "@mui/icons-material";
+import { CoPresent, Dataset, Diversity2, Group, HowToVote, Link, Logout, TextFields, Timelapse } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
 
 export default function MenuDrawer({
@@ -39,6 +39,12 @@ export default function MenuDrawer({
           active={page === '/app/fields'}
           onClick={() => router.push('/app/fields')}
           media={<TextFields/>}
+        />
+        <MenuListItem
+          title="Polls"
+          active={page === '/app/polls'}
+          onClick={() => router.push('/app/polls')}
+          media={<HowToVote/>}
         />
         <MenuListItem
           title="Friends"

@@ -467,6 +467,128 @@ export type Database = {
           },
         ]
       }
+      poll_options: {
+        Row: {
+          description: string | null
+          id: string
+          is_abstain: boolean
+          is_veto: boolean
+          name: string | null
+          poll: string
+        }
+        Insert: {
+          description?: string | null
+          id?: string
+          is_abstain?: boolean
+          is_veto?: boolean
+          name?: string | null
+          poll: string
+        }
+        Update: {
+          description?: string | null
+          id?: string
+          is_abstain?: boolean
+          is_veto?: boolean
+          name?: string | null
+          poll?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "poll_options_poll_fkey"
+            columns: ["poll"]
+            isOneToOne: false
+            referencedRelation: "polls"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      poll_votes: {
+        Row: {
+          id: string
+          member: string | null
+          option: string | null
+          poll: string | null
+        }
+        Insert: {
+          id?: string
+          member?: string | null
+          option?: string | null
+          poll?: string | null
+        }
+        Update: {
+          id?: string
+          member?: string | null
+          option?: string | null
+          poll?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "poll_votes_member_fkey"
+            columns: ["member"]
+            isOneToOne: false
+            referencedRelation: "members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "poll_votes_option_fkey"
+            columns: ["option"]
+            isOneToOne: false
+            referencedRelation: "poll_options"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "poll_votes_poll_fkey"
+            columns: ["poll"]
+            isOneToOne: false
+            referencedRelation: "polls"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      polls: {
+        Row: {
+          account: string | null
+          can_abstain: boolean | null
+          can_veto: boolean | null
+          created_at: string
+          description: string | null
+          ends_at: string | null
+          id: string
+          is_multi: boolean | null
+          name: string | null
+        }
+        Insert: {
+          account?: string | null
+          can_abstain?: boolean | null
+          can_veto?: boolean | null
+          created_at?: string
+          description?: string | null
+          ends_at?: string | null
+          id?: string
+          is_multi?: boolean | null
+          name?: string | null
+        }
+        Update: {
+          account?: string | null
+          can_abstain?: boolean | null
+          can_veto?: boolean | null
+          created_at?: string
+          description?: string | null
+          ends_at?: string | null
+          id?: string
+          is_multi?: boolean | null
+          name?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "polls_account_fkey"
+            columns: ["account"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       relationships: {
         Row: {
           directional: boolean

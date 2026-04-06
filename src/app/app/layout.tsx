@@ -19,6 +19,8 @@ const TITLES = {
   '^/app/buckets$': 'Privacy buckets',
   '^/app/buckets/(.+)$': 'Bucket',
   '^/app/fields$': 'Fields',
+  '^/app/polls$': 'Polls',
+  '^/app/polls/(.+)$': 'Poll',
   '^/app/friends$': 'Friends',
   '^/app/relationships$': 'Relationships',
   '^/app/account$': 'Account',

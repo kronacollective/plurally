@@ -107,8 +107,36 @@ CREATE TABLE public.members (
   account uuid,
   is_status boolean NOT NULL DEFAULT false,
   archived boolean NOT NULL DEFAULT false,
+  member_of text,
   CONSTRAINT members_pkey PRIMARY KEY (id),
-  CONSTRAINT members_account_fkey FOREIGN KEY (account) REFERENCES public.accounts(id)
+  CONSTRAINT members_account_fkey FOREIGN KEY (account) REFERENCES public.accounts(id),
+  CONSTRAINT members_member_of_fkey FOREIGN KEY (member_of) REFERENCES public.members(id)
+);
+CREATE TABLE public.notifications (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  created_at timestamp with time zone NOT NULL DEFAULT now(),
+  account uuid NOT NULL,
+  title text,
+  body text,
+  CONSTRAINT notifications_pkey PRIMARY KEY (id),
+  CONSTRAINT notifications_account_fkey FOREIGN KEY (account) REFERENCES public.accounts(id)
+);
+CREATE TABLE public.relationships (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  directional boolean NOT NULL DEFAULT false,
+  origin_arbitrary text,
+  origin_member text,
+  origin_label text,
+  target_arbitrary text,
+  target_member text,
+  target_label text,
+  type text,
+  label text,
+  origin_type text,
+  target_type text,
+  CONSTRAINT relationships_pkey PRIMARY KEY (id),
+  CONSTRAINT relationships_origin_member_fkey FOREIGN KEY (origin_member) REFERENCES public.members(id),
+  CONSTRAINT relationships_target_member_fkey FOREIGN KEY (target_member) REFERENCES public.members(id)
 );
 CREATE TABLE public.subscriptions (
   account uuid NOT NULL,
