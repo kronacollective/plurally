@@ -107,6 +107,7 @@ export default function Statuses() {
     <>
       <Fab
         className="fixed right-safe-4 bottom-safe-16"
+        style={{ zIndex: 1500 }}
         icon={<Add/>}
         onClick={() => setSheetOpened(true)}
       />
