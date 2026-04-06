@@ -72,7 +72,7 @@ export default function MainMemberDisplay({
         search: member.id
       });
     // Remove old file
-    await supabase.storage.from('avatars').remove([old_file?.[0].name ?? '']);
+    await supabase.storage.from('avatars').remove([old_file?.[0]?.name ?? '']);
     // Upload new file
     const path = `${member.id}-${new Date().getTime()}.${mime.getExtension(avatar_file!.type)}`;
     const { error } = await supabase.storage

@@ -2,7 +2,7 @@
 import useAccount from "@/lib/hooks/useAccount";
 import { useShortMutations, useShortQuery } from "@/lib/hooks/useShortQuery";
 import { useSupabase } from "@/lib/supabase/client"
-import { Checkbox, List, ListItem, ListItemAvatar, ListItemText, MenuItem, Select, Typography } from "@mui/material";
+import { List, ListItem, ListItemAvatar, ListItemText, MenuItem, Select, Typography } from "@mui/material";
 import { Block, BlockTitle, Button } from "konsta/react";
 import Image from "next/image";
 import { useMemo } from "react";
