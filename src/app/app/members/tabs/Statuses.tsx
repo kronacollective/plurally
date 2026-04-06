@@ -6,7 +6,7 @@ import { Block, BlockTitle, Fab, Link, Sheet, Toolbar, ToolbarPane } from "konst
 import { nanoid } from "nanoid";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useImmer } from "use-immer";
 
 export default function Statuses() {
@@ -78,6 +78,19 @@ export default function Statuses() {
     },
     [ account ],
   );
+
+  const sorted_statuses = useMemo(() => {
+    const fronting_members = statuses?.filter(member => active_fronts?.find(afr => afr.member === member.id));
+    const sleeping_members = statuses?.filter(member => !active_fronts?.find(afr => afr.member === member.id));
+    const alphabetical_fronting_members = fronting_members?.toSorted((a, b) => a.name?.localeCompare(b.name!) ?? 0) ?? [];
+    const alphabetical_sleeping_members = sleeping_members?.toSorted((a, b) => a.name?.localeCompare(b.name!) ?? 0) ?? [];
+    const ordered_members = [
+      ...alphabetical_fronting_members,
+      ...alphabetical_sleeping_members,
+    ];
+    const ordered_members_without_archived = ordered_members.filter(om => !om.archived);
+    return ordered_members_without_archived;
+  }, [active_fronts, statuses]);
 
   // @ts-expect-error Strictness is making short mutations not work anymore
   const front_mutations = useShortMutations<FrontMutators>(
@@ -159,7 +172,7 @@ export default function Statuses() {
       <Block>
         <BlockTitle style={{ marginBottom: 1 }}>All statuses</BlockTitle>
         <List>
-          { statuses?.map(status => {
+          { sorted_statuses?.map(status => {
             const is_fronting = active_fronts?.find(fr => fr.member === status.id);
             return (
               <ListItem
