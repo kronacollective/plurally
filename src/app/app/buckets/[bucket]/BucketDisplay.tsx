@@ -35,10 +35,11 @@ export default function BucketDisplay({
   const is_mobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const [ active_tab, setActiveTab ] = useState('settings');
-  const [ bucket_state, updateBucketState ] = useImmer<Record<string, string | null>>({
+  const [ bucket_state, updateBucketState ] = useImmer<Record<string, string | boolean | null>>({
     name: '',
     description: '',
     color: '',
+    is_public: false,
   });
 
   const { data: bucket } = useShortQuery(
@@ -67,9 +68,10 @@ export default function BucketDisplay({
         const { error } = await supabase
           .from('buckets')
           .update({
-            name: bucket_state.name!,
-            description: bucket_state.description,
-            color: bucket_state.color,
+            name: bucket_state.name as string,
+            description: bucket_state.description as string,
+            color: bucket_state.color as string,
+            is_public: bucket_state.is_public as boolean,
           })
           .eq('id', bucket_id);
         if (error) {

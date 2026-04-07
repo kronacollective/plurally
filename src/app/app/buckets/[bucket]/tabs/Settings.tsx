@@ -1,12 +1,11 @@
 import { Tables } from "@/lib/supabase/database.types";
 import { Save } from "@mui/icons-material";
-import { Stack, TextField } from "@mui/material";
+import { List, ListItem, ListItemText, Stack, Switch, TextField } from "@mui/material";
 import { Fab } from "konsta/react";
 import { MuiColorInput } from "mui-color-input";
 import { Updater } from "use-immer";
 
 export default function BucketSettings({
-  bucket,
   bucket_mutations,
   bucket_state,
   updateBucketState,
@@ -17,8 +16,8 @@ export default function BucketSettings({
   } & {
     invalidateCache: () => Promise<void>,
   },
-  bucket_state: Record<string, string | null>,
-  updateBucketState: Updater<Record<string, string | null>>,
+  bucket_state: Record<string, string | boolean | null>,
+  updateBucketState: Updater<Record<string, string | boolean | null>>,
 }) {
   return (
     <>
@@ -51,6 +50,21 @@ export default function BucketSettings({
           onChange={nv => updateBucketState(draft => { draft.color = nv.slice(4, -1) })}
           sx={{ width: '90%' }}
         />
+        <List sx={{ width: '90%' }}>
+          <ListItem
+            secondaryAction={
+              <Switch
+                checked={bucket_state?.is_public as boolean}
+                onChange={ev => updateBucketState(draft => { draft.is_public = ev.target.checked })}
+              />
+            }
+          >
+            <ListItemText
+              primary="Make bucket public"
+              secondary="If enabled, anyone will be able to see the contents of this bucket"
+            />
+          </ListItem>
+        </List>
       </Stack>
       <Fab
         className="fixed bottom-safe-16 right-safe-4"
