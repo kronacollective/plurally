@@ -76,6 +76,8 @@ export async function POST(request: Request, context: RouteContext<'/api/member/
     const members_from_bfii_set = new Set(members_from_bfii?.map(mfbfii => mfbfii.member));
     // Get only members we can see
     const visible_fronters_set = members_from_bfii_set.intersection(active_fronters_set);
+    // If we can see no members, return early
+    if (visible_fronters_set.size < 1) return;
     // Filter active fronts
     const visible_active_fronts = active_fronts?.filter(af => visible_fronters_set.has(af.member.id));
     // Add notification to history
