@@ -1,5 +1,5 @@
-import { createClient } from "@/lib/supabase/server";
-import { Avatar, Grid, List, ListItem, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
+import { createAdminClient } from "@/lib/supabase/server";
+import { Avatar, Grid, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableRow, Typography } from "@mui/material";
 import { format } from "date-fns";
 import MuiMarkdown from "mui-markdown";
 import Image from "next/image";
@@ -9,7 +9,7 @@ export default async function UserMember({
 }: {
   params: Promise<{username: string, member: string}>,
 }) {
-  const supabase = await createClient();
+  const supabase = await createAdminClient();
   const { username, member: member_id } = await params;
 
   // Get account for username

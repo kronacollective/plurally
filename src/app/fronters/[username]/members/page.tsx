@@ -1,11 +1,11 @@
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/server";
 
 export default async function MembersByUser({
   params
 }: {
   params: Promise<{username: string}>,
 }) {
-  const supabase = await createClient();
+  const supabase = await createAdminClient();
   const { username } = await params;
 
   // Get account for username

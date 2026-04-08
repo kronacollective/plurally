@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/server";
 import { List, ListItem, ListItemAvatar, ListItemButton, ListItemText, Paper, Typography } from "@mui/material";
 import Image from "next/image";
 import Link from "next/link";
@@ -8,7 +8,7 @@ export default async function FrontersByUser({
 }: {
   params: Promise<{username: string}>,
 }) {
-  const supabase = await createClient();
+  const supabase = await createAdminClient();
   const { username } = await params;
 
   // Get account for username
