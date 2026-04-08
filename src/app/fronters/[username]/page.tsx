@@ -72,7 +72,7 @@ export default async function FrontersByUser({
                 marginBottom: 5,
               }}
             >
-              <Link href={`/fronters/${username}/${member?.id}`} style={{ width: '100%' }}>
+              <Link href={`./${username}/${member?.id}`} style={{ width: '100%' }}>
                 <ListItemButton
                   // sx={{ width: '100%' }}
                   // onClick={() => router.push(`/app/friends/${friend_id}/${member.id}`)}
