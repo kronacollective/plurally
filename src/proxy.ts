@@ -5,14 +5,27 @@ import { createClient } from "@/lib/supabase/server"
 export async function proxy(request: NextRequest) {
   const supabase = await createClient();
   const { data } = await supabase.auth.getClaims();
-  if (request.nextUrl.pathname.startsWith('/login')) {
+  // Get hostname and pathname
+  const hostname = request.headers.get('host');
+  const pathname = request.nextUrl.pathname;
+  // If we are coming from main page (localhost:3001, plurally main domain...)
+  // then stay as is.
+  if (process.env.NEXT_PUBLIC_SITE_URL?.match(hostname!)) {
+    // Do nothing, continue
+  } else { // Otherwise redirect to /fronters
+    return NextResponse.rewrite(new URL(`/fronters${pathname}`, request.url));
+  }
+  // If in login or fronters, just update session
+  if (pathname.startsWith('/login') || pathname.startsWith('/fronters')) {
     return await updateSession(request)
   }
+  // If not logged in, redirect to /login
   if (!data) {
     const url = request.nextUrl.clone();
     url.pathname = '/login'
     return NextResponse.redirect(url);
   }
+  // Update session
   return await updateSession(request)
 }
 
