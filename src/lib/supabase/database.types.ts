@@ -381,6 +381,51 @@ export type Database = {
           },
         ]
       }
+      journal: {
+        Row: {
+          account: string
+          content: string
+          created_at: string
+          id: string
+          is_public: boolean
+          member: string
+          title: string | null
+        }
+        Insert: {
+          account: string
+          content: string
+          created_at?: string
+          id?: string
+          is_public?: boolean
+          member: string
+          title?: string | null
+        }
+        Update: {
+          account?: string
+          content?: string
+          created_at?: string
+          id?: string
+          is_public?: boolean
+          member?: string
+          title?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "journal_account_fkey"
+            columns: ["account"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "journal_member_fkey"
+            columns: ["member"]
+            isOneToOne: false
+            referencedRelation: "members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       members: {
         Row: {
           account: string | null
@@ -394,6 +439,7 @@ export type Database = {
           member_of: string | null
           name: string | null
           pronouns: string | null
+          username: string | null
         }
         Insert: {
           account?: string | null
@@ -407,6 +453,7 @@ export type Database = {
           member_of?: string | null
           name?: string | null
           pronouns?: string | null
+          username?: string | null
         }
         Update: {
           account?: string | null
@@ -420,6 +467,7 @@ export type Database = {
           member_of?: string | null
           name?: string | null
           pronouns?: string | null
+          username?: string | null
         }
         Relationships: [
           {
