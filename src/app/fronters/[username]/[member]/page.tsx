@@ -81,7 +81,7 @@ export default async function UserMember({
     <Paper elevation={1} sx={{ borderRadius: '10px', m: 5, p: 5, backgroundColor: `rgba(${member.color ?? '255, 255, 255'}, 20%)` }}>
       <Typography variant="h4" sx={{ mb: 2 }}>{member.name}&apos;s profile</Typography>
       <Grid container spacing={2}>
-        <Grid size={4}>
+        <Grid size={{ xs: 12, sm: 12, md: 4 }}>
           <Stack spacing={2}>
             <TableContainer component={Paper} sx={{ backgroundColor: `rgba(${member.color ?? '255, 255, 255'}, 30%)` }}>
               <Table>
@@ -124,7 +124,7 @@ export default async function UserMember({
             </TableContainer>
           </Stack>
         </Grid>
-        <Grid size={8}>
+        <Grid size={{ xs: 12, sm: 12, md: 8 }}>
           <Stack spacing={5}>
             {entries?.map(entry => {
               return (
