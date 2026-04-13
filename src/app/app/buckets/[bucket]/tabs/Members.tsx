@@ -3,6 +3,7 @@ import { useSupabase } from "@/lib/supabase/client";
 import { Tables } from "@/lib/supabase/database.types";
 import { Checkbox, List, ListItem, ListItemAvatar, ListItemText, Stack } from "@mui/material";
 import Image from "next/image";
+import { useMemo } from "react";
 import { Updater } from "use-immer";
 
 type BucketMemberMutations = {
@@ -12,9 +13,6 @@ type BucketMemberMutations = {
 
 export default function BucketMembers({
   bucket,
-  bucket_mutations,
-  bucket_state,
-  updateBucketState,
 }: {
   bucket: Tables<'buckets'>
   bucket_mutations: {
@@ -64,6 +62,18 @@ export default function BucketMembers({
     },
   );
 
+  const ordered_members = useMemo(() => {
+    const actual_members = members?.filter(member => !member.is_status);
+    const statuses = members?.filter(member => member.is_status);
+    const alphabetical_members = actual_members?.toSorted((a, b) => a.name?.localeCompare(b.name!) ?? 0) ?? [];
+    const alphabetical_statuses = statuses?.toSorted((a, b) => a.name?.localeCompare(b.name!) ?? 0) ?? [];
+    const ordered_members = [
+      ...alphabetical_members,
+      ...alphabetical_statuses,
+    ];
+    return ordered_members;
+  }, [members]);
+
   // @ts-expect-error Types bad
   const bucket_member_mutators = useShortMutations<BucketMemberMutations>(
     ['bucket-members', bucket.id],
@@ -90,7 +100,7 @@ export default function BucketMembers({
     <>
       <Stack gap={2} display="flex" sx={{ width: '100%', justifyContent: 'center', alignItems: 'center' }}>
         <List sx={{ width: '90%' }}>
-          { members?.map(member => {
+          { ordered_members?.map(member => {
             return (
               <ListItem
                 key={member.id}
