@@ -423,7 +423,7 @@ export default function MainMemberDisplay({
                       </IconButton>
                       <div
                         style={{
-                          backgroundColor: 'white',
+                          backgroundColor: `rgba(${member.color ?? '255, 255, 255'}, 20%)`,
                           borderRadius: '10px',
                           padding: '1em',
                         }}

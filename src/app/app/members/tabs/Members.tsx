@@ -1,7 +1,7 @@
 import { useShortMutations, useShortQuery } from "@/lib/hooks/useShortQuery";
 import { useSupabase } from "@/lib/supabase/client";
 import { Add, Archive, ArrowDownward, ArrowLeft, ArrowUpward, Check, Close, CreateNewFolder, ExpandLess, ExpandMore, Folder, Settings } from "@mui/icons-material";
-import { Accordion, AccordionDetails, AccordionSummary, IconButton, List, ListItem, ListItemAvatar, ListItemButton, ListItemText, Stack, TextField, useMediaQuery, useTheme } from "@mui/material";
+import { IconButton, List, ListItem, ListItemAvatar, ListItemButton, ListItemText, Stack, TextField, useMediaQuery, useTheme } from "@mui/material";
 import { Block, BlockTitle, Button, Fab, Link, Sheet, Toolbar, ToolbarPane } from "konsta/react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
