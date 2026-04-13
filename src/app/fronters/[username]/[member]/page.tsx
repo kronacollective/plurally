@@ -88,11 +88,11 @@ export default async function UserMember({
   const { data: entries } = await supabase
     .from('journal')
     .select()
-    .eq('member', member_id_or_username)
+    .eq('member', member!.id)
     .eq('is_public', true);
 
   // Return nothing if invisible
-  if (!member || !visible_member_ids.has(member.id)) {
+  if (!member || !visible_member_ids.has(member!.id)) {
     console.log('Attempted to get invisible member');
     return <></>;
   }
