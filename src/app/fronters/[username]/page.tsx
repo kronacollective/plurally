@@ -31,7 +31,8 @@ export default async function FrontersByUser({
     .select()
     .eq('account', account!.id)
     .eq('is_status', false)
-    .eq('archived', false);
+    .eq('archived', false)
+    .eq('unlisted', false);
 
   // Get members in public buckets
   const { data: members_in_public_buckets } = await supabase

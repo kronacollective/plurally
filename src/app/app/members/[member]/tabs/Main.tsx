@@ -331,6 +331,15 @@ export default function MainMemberDisplay({
             onChange={nv => updateMemberState(draft => { draft.color = nv.slice(4, -1) })}
             sx={{ width: '100%' }}
           />
+          <TextField
+            name="username"
+            label="Public username"
+            variant="outlined"
+            // defaultValue={member?.name}
+            value={member_state.username ?? ''}
+            onChange={ev => updateMemberState(draft => { draft.username = ev.target.value })}
+            sx={{ width: '100%' }}
+          />
         </Stack>
       </Block>
       <BlockTitle>Relationships</BlockTitle>

@@ -495,6 +495,7 @@ export type Database = {
           member_of: string | null
           name: string | null
           pronouns: string | null
+          unlisted: boolean
           username: string | null
         }
         Insert: {
@@ -509,6 +510,7 @@ export type Database = {
           member_of?: string | null
           name?: string | null
           pronouns?: string | null
+          unlisted?: boolean
           username?: string | null
         }
         Update: {
@@ -523,6 +525,7 @@ export type Database = {
           member_of?: string | null
           name?: string | null
           pronouns?: string | null
+          unlisted?: boolean
           username?: string | null
         }
         Relationships: [

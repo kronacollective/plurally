@@ -3,7 +3,7 @@ import { useShortQuery } from "@/lib/hooks/useShortQuery";
 import { useSupabase } from "@/lib/supabase/client";
 import { Tables } from "@/lib/supabase/database.types";
 import { Clear } from "@mui/icons-material";
-import { FormControl, FormControlLabel, IconButton, List, ListItem, ListItemAvatar, ListItemText, MenuItem, Select, Stack, Switch } from "@mui/material";
+import { IconButton, List, ListItem, ListItemAvatar, ListItemText, MenuItem, Select, Stack, Switch } from "@mui/material";
 import { Button } from "konsta/react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -18,6 +18,8 @@ export default function SettingsMemberDisplay({
     deleteMember: () => Promise<void>;
     archiveMember: () => Promise<void>;
     unarchiveMember: () => Promise<void>;
+    unlistMember: () => Promise<void>;
+    relistMember: () => Promise<void>;
     updateMemberOf: (member_of: string | null) => Promise<void>;
   } & {
     invalidateCache: () => Promise<void>;
@@ -59,6 +61,16 @@ export default function SettingsMemberDisplay({
             }
           >
             <ListItemText primary="Archive member"/>
+          </ListItem>
+          <ListItem
+            secondaryAction={
+              <Switch
+                checked={member.unlisted}
+                onChange={ev => ev.target.checked ? member_mutations.unlistMember() : member_mutations.relistMember()}
+              />
+            }
+          >
+            <ListItemText primary="Unlist member" secondary="This will make it so the member is unlisted from the fronters page"/>
           </ListItem>
           <ListItem
             sx={{ paddingBlock: 5 }}

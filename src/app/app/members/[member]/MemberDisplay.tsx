@@ -4,7 +4,7 @@ import { Stack, useMediaQuery, useTheme } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useSupabase } from "@/lib/supabase/client";
 import { Tabbar, TabbarLink, ToolbarPane } from "konsta/react";
-import { Person, Settings, TextFields } from "@mui/icons-material";
+import { DrawTwoTone, Person, Settings, TextFields } from "@mui/icons-material";
 import { useShortMutations, useShortQuery } from "@/lib/hooks/useShortQuery";
 import { useImmer } from "use-immer";
 import { DRAWER_WIDTH } from "@/lib/globals";
@@ -27,6 +27,8 @@ type MemberMutations = {
   updateAvatar: (url: string) => Promise<void>,
   archiveMember: () => Promise<void>,
   unarchiveMember: () => Promise<void>,
+  unlistMember: () => Promise<void>,
+  relistMember: () => Promise<void>,
   updateMemberOf: (member_of: string | null) => Promise<void>,
 };
 
@@ -60,6 +62,7 @@ export default function MemberDisplay({
     updateMemberState(draft => {
       draft.avatar = member.avatar;
       draft.name = member.name;
+      draft.username = member.username;
       draft.description = member.description;
       draft.pronouns = member.pronouns;
       draft.color = member.color;
@@ -98,6 +101,18 @@ export default function MemberDisplay({
         await supabase
           .from('members')
           .update({ archived: false })
+          .eq('id', member_id);
+      },
+      unlistMember: async () => {
+        await supabase
+          .from('members')
+          .update({ unlisted: true })
+          .eq('id', member_id);
+      },
+      relistMember: async () => {
+        await supabase
+          .from('members')
+          .update({ unlisted: false })
           .eq('id', member_id);
       },
       updateMemberOf: async (member_of: string | null) => {

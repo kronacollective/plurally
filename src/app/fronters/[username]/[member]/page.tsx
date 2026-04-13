@@ -18,7 +18,7 @@ export default async function UserMember({
   params: Promise<{username: string, member: string}>,
 }) {
   const supabase = await createAdminClient();
-  const { username, member: member_id } = await params;
+  const { username, member: member_id_or_username } = await params;
 
   // Get account for username
   const { data: account } = await supabase
@@ -52,13 +52,24 @@ export default async function UserMember({
   const member_ids = new Set(members?.map(member => member.id));
   const mipb_ids = new Set(members_in_public_buckets?.map(member => member.member));
   const visible_member_ids = member_ids.intersection(mipb_ids);
+  console.log('visible_member_ids', {
+    member_ids,
+    mipb_ids,
+    visible_member_ids,
+  });
 
   // Get this member
-  const { data: member } = await supabase
+  const { data: member_by_id } = await supabase
     .from('members')
     .select()
-    .eq('id', member_id)
+    .eq('id', member_id_or_username)
     .single();
+  const { data: member_by_username } = await supabase
+    .from('members')
+    .select()
+    .eq('username', member_id_or_username)
+    .single();
+  const member = member_by_id ?? member_by_username;
 
   // Get fields in public buckets
   const { data: fields_in_public_buckets } = await supabase
@@ -77,11 +88,12 @@ export default async function UserMember({
   const { data: entries } = await supabase
     .from('journal')
     .select()
-    .eq('member', member_id)
+    .eq('member', member_id_or_username)
     .eq('is_public', true);
 
   // Return nothing if invisible
-  if (!member || !visible_member_ids.has(member_id)) {
+  if (!member || !visible_member_ids.has(member.id)) {
+    console.log('Attempted to get invisible member');
     return <></>;
   }
 
