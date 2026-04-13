@@ -4,6 +4,14 @@ import { format } from "date-fns";
 import MuiMarkdown from "mui-markdown";
 import Image from "next/image";
 
+// const getContrastYIQ = (r: number, g: number, b: number) => {
+//   // const r = parseInt(hexcolor.substring(1,3),16);
+//   // const g = parseInt(hexcolor.substring(3,5),16);
+//   // const b = parseInt(hexcolor.substring(5,7),16);
+//   const yiq = ((r*299)+(g*587)+(b*114))/1000;
+//   return (yiq >= 128) ? 'black' : 'white';
+// };
+
 export default async function UserMember({
   params
 }: {
@@ -83,7 +91,7 @@ export default async function UserMember({
       <Grid container spacing={2}>
         <Grid size={{ xs: 12, sm: 12, md: 4 }}>
           <Stack spacing={2}>
-            <TableContainer component={Paper} sx={{ backgroundColor: `rgba(${member.color ?? '255, 255, 255'}, 30%)` }}>
+            <TableContainer component={Paper}>
               <Table>
                 <TableBody>
                   <TableRow>
@@ -97,7 +105,7 @@ export default async function UserMember({
                 </TableBody>
               </Table>
             </TableContainer>
-            <TableContainer component={Paper} sx={{ backgroundColor: `rgba(${member.color ?? '255, 255, 255'}, 30%)` }}>
+            <TableContainer component={Paper}>
               <Table>
                 <TableBody>
                   { fields_and_values?.map(fav => {
@@ -128,8 +136,8 @@ export default async function UserMember({
           <Stack spacing={5}>
             {entries?.map(entry => {
               return (
-                <Paper key={entry.id} elevation={1}>
-                  <div style={{ padding: '2em' }}>
+                <div key={entry.id}>
+                  <div style={{ padding: '2em', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                     <Typography variant="h4">{entry?.title}</Typography>
                     <Stack direction="row" sx={{ alignItems: 'center' }}>
                       <Avatar>
@@ -143,11 +151,11 @@ export default async function UserMember({
                       </Avatar>
                       { member.name }
                     </Stack>
-                    <Paper elevation={1} sx={{ p: 3, m: 3 }}>
+                    <Paper elevation={1} sx={{ p: 3, m: 3, maxWidth: '80ch' }}>
                       <MuiMarkdown>{entry?.content}</MuiMarkdown>
                     </Paper>
                   </div>
-                </Paper>
+                </div>
               )
             })}
           </Stack>
