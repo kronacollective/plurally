@@ -487,6 +487,7 @@ export type Database = {
           account: string | null
           archived: boolean
           avatar: string | null
+          banner: string | null
           color: string
           created_at: string
           description: string | null
@@ -502,6 +503,7 @@ export type Database = {
           account?: string | null
           archived?: boolean
           avatar?: string | null
+          banner?: string | null
           color?: string
           created_at?: string
           description?: string | null
@@ -517,6 +519,7 @@ export type Database = {
           account?: string | null
           archived?: boolean
           avatar?: string | null
+          banner?: string | null
           color?: string
           created_at?: string
           description?: string | null

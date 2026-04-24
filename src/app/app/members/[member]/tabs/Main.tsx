@@ -13,8 +13,11 @@ import { useShortMutations, useShortQuery } from "@/lib/hooks/useShortQuery";
 import useAccount from "@/lib/hooks/useAccount";
 import { useRouter } from "next/navigation";
 import EditableMarkdownField from "@/app/components/EditableMarkdownField";
+import Grainient from "@/app/components/bits/Grainient";
+import { converter, formatHex, parse, random } from "culori";
 
 const AVATAR_SIZES = [300, 300];
+const BANNER_SIZES = ['90vw', '40vh'];
 
 type FrontMutators = {
   front: (member_id: string) => Promise<void>,
@@ -39,6 +42,7 @@ export default function MainMemberDisplay({
     update: () => Promise<void>;
     deleteMember: () => Promise<void>;
     updateAvatar: (url: string) => Promise<void>;
+    updateBanner: (url: string) => Promise<void>;
   } & {
     invalidateCache: () => Promise<void>;
   },
@@ -47,9 +51,10 @@ export default function MainMemberDisplay({
 }) {
   const supabase = useSupabase();
   const router = useRouter();
+
   const [ avatar_src, setAvatarSrc ] = useState<string | null>(null);
   const [ avatar_file, setAvatarFile ] = useState<File | null>(null);
-  const { openFilePicker, } = useFilePicker({
+  const { openFilePicker: openAvatarFilePicker } = useFilePicker({
     readAs: 'DataURL',
     accept: 'image/*',
     onFilesSuccessfullySelected: ({filesContent, plainFiles}) => {
@@ -57,10 +62,23 @@ export default function MainMemberDisplay({
       setAvatarFile(plainFiles.at(0)!);
     },
   });
+
+  const [ banner_src, setBannerSrc ] = useState<string | null>(null);
+  const [ banner_file, setBannerFile ] = useState<File | null>(null);
+  const { openFilePicker: openBannerFilePicker } = useFilePicker({
+    readAs: 'DataURL',
+    accept: 'image/*',
+    onFilesSuccessfullySelected: ({filesContent, plainFiles}) => {
+      setBannerSrc(filesContent.at(0)!.content)
+      setBannerFile(plainFiles.at(0)!);
+    },
+  });
+
   const theme = useTheme()
   const is_mobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const [ avatar_sheet_open, setAvatarSheetOpen ] = useState(false);
+  const [ banner_sheet_open, setBannerSheetOpen ] = useState(false);
 
   const uploadAvatar = useCallback(async () => {
     // Locate old file
@@ -84,6 +102,29 @@ export default function MainMemberDisplay({
     // Update avatar URL
     member_mutations.updateAvatar(data.publicUrl);
   }, [avatar_file, member.id, member_mutations, supabase.storage]);
+
+  const uploadBanner = useCallback(async () => {
+    // Locate old file
+    const { data: old_file } = await supabase
+      .storage
+      .from('banners')
+      .list('', {
+        limit: 1,
+        search: member.id
+      });
+    // Remove old file
+    await supabase.storage.from('banners').remove([old_file?.[0]?.name ?? '']);
+    // Upload new file
+    const path = `${member.id}-${new Date().getTime()}.${mime.getExtension(banner_file!.type)}`;
+    const { error } = await supabase.storage
+      .from('banners')
+      .upload(path, banner_file!, {upsert: true});
+    if (error) console.error('uploadBanner', error);
+    // Get public URL for new file
+    const { data } = await supabase.storage.from('banners').getPublicUrl(path);
+    // Update avatar URL
+    member_mutations.updateBanner(data.publicUrl);
+  }, [banner_file, member.id, member_mutations, supabase.storage]);
 
   // Get submembers
   const { data: account } = useAccount();
@@ -230,22 +271,48 @@ export default function MainMemberDisplay({
     }
   );
 
+  const gradient_colors = useMemo(() => {
+    const hsl = converter('hsl');
+    const member_color = hsl(`rgb(${member.color})`);
+    const color_a = random('hsl', {
+      h: member_color?.h,
+      s: [member_color!.s - 0.25, member_color!.s + 0.25],
+    });
+    const color_b = random('hsl', {
+      h: member_color?.h,
+      s: [member_color!.s - 0.25, member_color!.s + 0.25],
+    });
+    return [ formatHex(color_a), formatHex(member_color), formatHex(color_b) ];
+  }, [member.color]);
+
   return (
     <>
-      <Link onClick={() => setAvatarSheetOpen(true)}>
-        <Avatar variant="rounded" sx={{ width: AVATAR_SIZES[0], height: AVATAR_SIZES[1], mt: 3, mb: 3 }}>
-          {member && member.avatar ? (
-            <Image
-              src={member.avatar}
-              alt={`Profile picture for ${member.name}`}
-              width={AVATAR_SIZES[0]}
-              height={AVATAR_SIZES[1]}
+      <div style={{ width: BANNER_SIZES[0], height: BANNER_SIZES[1] }}>
+        <Link onClick={() => setBannerSheetOpen(true)} style={{ width: BANNER_SIZES[0], height: BANNER_SIZES[1], position: 'relative' }}>
+          { member && member.banner ? (
+            <Image fill
+              src={member.banner}
+              alt={`Banner image for ${member.name}`}
+              objectFit="cover"
+              // sizes={`(min-width: 20em) ${BANNER_SIZES[0]}`}
             />
-          ) : (
-            "?"
-          )}
-        </Avatar>
-      </Link>
+          ) : <Grainient color1={gradient_colors[0]} color2={gradient_colors[1]} color3={gradient_colors[2]} />}
+        </Link>
+        <Link onClick={() => setAvatarSheetOpen(true)} style={{ position: 'absolute', top: '10%', left: '50%' }}>
+          <Avatar variant="rounded" sx={{ width: AVATAR_SIZES[0], height: AVATAR_SIZES[1], mt: 3, mb: 3, border: `2px solid rgba(${member.color ?? '255, 255, 255'}, 30%)` }}>
+            {member && member.avatar ? (
+              <Image
+                src={member.avatar}
+                alt={`Profile picture for ${member.name}`}
+                width={AVATAR_SIZES[0]}
+                height={AVATAR_SIZES[1]}
+              />
+            ) : (
+              "?"
+            )}
+          </Avatar>
+        </Link>
+      </div>
       <Sheet
         className="pb-safe"
         opened={avatar_sheet_open}
@@ -285,7 +352,52 @@ export default function MainMemberDisplay({
             style={{ padding: 16 }}
           />}
           <Button
-            onClick={openFilePicker}
+            onClick={openAvatarFilePicker}
+          >
+            Select image
+          </Button>
+        </Block>
+      </Sheet>
+      <Sheet
+        className="pb-safe"
+        opened={banner_sheet_open}
+        onBackdropClick={() => setAvatarSheetOpen(false)}
+        style={{ zIndex: 1400, maxWidth: '500px', left: is_mobile ? '0' : '40%' }}
+      >
+        <Toolbar top className="justify-end">
+          <ToolbarPane>
+            <Link iconOnly onClick={() => setAvatarSheetOpen(false)}>
+              <Close/>
+            </Link>
+          </ToolbarPane>
+          <ToolbarPane>
+            <Link iconOnly onClick={() => {
+              uploadBanner();
+              setBannerSheetOpen(false);
+            }}>
+              <Check/>
+            </Link>
+          </ToolbarPane>
+        </Toolbar>
+        <Block style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
+          {/* <TextField
+            label="Avatar URL"
+            variant="outlined"
+            sx={{ width: '100%' }}
+            value={member_state.avatar ?? ''}
+            onChange={ev => updateMemberState(draft => { draft.avatar = ev.target.value })}
+          /> */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          {banner_src && <img
+            src={banner_src}
+            id="proposed-banner"
+            alt="Proposed banner image"
+            width={1600}
+            height={800}
+            style={{ padding: 16 }}
+          />}
+          <Button
+            onClick={openBannerFilePicker}
           >
             Select image
           </Button>

@@ -25,6 +25,7 @@ type MemberMutations = {
   update: () => Promise<void>,
   deleteMember: () => Promise<void>,
   updateAvatar: (url: string) => Promise<void>,
+  updateBanner: (url: string) => Promise<void>,
   archiveMember: () => Promise<void>,
   unarchiveMember: () => Promise<void>,
   unlistMember: () => Promise<void>,
@@ -61,6 +62,7 @@ export default function MemberDisplay({
     if (!member) return;
     updateMemberState(draft => {
       draft.avatar = member.avatar;
+      draft.banner = member.banner;
       draft.name = member.name;
       draft.username = member.username;
       draft.description = member.description;
@@ -89,6 +91,12 @@ export default function MemberDisplay({
         await supabase
           .from('members')
           .update({ avatar: url })
+          .eq('id', member_id);
+      },
+      updateBanner: async (url: string) => {
+        await supabase
+          .from('members')
+          .update({ banner: url })
           .eq('id', member_id);
       },
       archiveMember: async () => {
