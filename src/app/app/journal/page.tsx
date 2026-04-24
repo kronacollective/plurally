@@ -4,7 +4,7 @@ import useAccount from "@/lib/hooks/useAccount";
 import { useShortQuery } from "@/lib/hooks/useShortQuery";
 import { useSupabase } from "@/lib/supabase/client";
 import { Add } from "@mui/icons-material";
-import { Avatar, List, ListItem, ListItemButton, ListItemText, Stack, Typography } from "@mui/material";
+import { Avatar, List, ListItem, ListItemButton, Stack, Typography } from "@mui/material";
 import { format } from "date-fns";
 import { Fab } from "konsta/react";
 import Image from "next/image";

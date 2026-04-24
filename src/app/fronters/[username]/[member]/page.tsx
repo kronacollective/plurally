@@ -86,6 +86,8 @@ export default async function UserMember({
     .eq('member', member!.id)
     .eq('is_public', true);
 
+  const ordered_entries = entries?.toSorted((a, b) => Number(new Date(b.created_at)) - Number(new Date(a.created_at)));
+
   // Return nothing if invisible
   if (!member || !visible_member_ids.has(member!.id)) {
     console.log('Attempted to get invisible member');
@@ -141,12 +143,12 @@ export default async function UserMember({
         </Grid>
         <Grid size={{ xs: 12, sm: 12, md: 8 }}>
           <Stack spacing={5}>
-            {entries?.map(entry => {
+            {ordered_entries?.map(entry => {
               return (
                 <div key={entry.id}>
-                  <div style={{ padding: '2em', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                  <div style={{ padding: '2em', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5 }}>
                     <Typography variant="h4">{entry?.title}</Typography>
-                    <Stack direction="row" sx={{ alignItems: 'center' }}>
+                    <Stack direction="row" sx={{ alignItems: 'center' }} gap={1}>
                       <Avatar>
                         {member.avatar ? <Image
                           className="rounded-full"
@@ -158,6 +160,7 @@ export default async function UserMember({
                       </Avatar>
                       { member.name }
                     </Stack>
+                    <Typography variant="caption">{ format(entry.created_at, 'PPpp') }</Typography>
                     <Paper elevation={1} sx={{ p: 3, m: 3, maxWidth: '80ch' }}>
                       <MuiMarkdown>{entry?.content}</MuiMarkdown>
                     </Paper>
