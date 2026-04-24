@@ -496,6 +496,7 @@ export type Database = {
           member_of: string | null
           name: string | null
           pronouns: string | null
+          roles: string[] | null
           unlisted: boolean
           username: string | null
         }
@@ -512,6 +513,7 @@ export type Database = {
           member_of?: string | null
           name?: string | null
           pronouns?: string | null
+          roles?: string[] | null
           unlisted?: boolean
           username?: string | null
         }
@@ -528,6 +530,7 @@ export type Database = {
           member_of?: string | null
           name?: string | null
           pronouns?: string | null
+          roles?: string[] | null
           unlisted?: boolean
           username?: string | null
         }

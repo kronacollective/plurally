@@ -1,4 +1,4 @@
-import { Avatar, IconButton, List, ListItem, ListItemAvatar, ListItemButton, ListItemText, MenuItem, Select, Stack, TextField, useMediaQuery, useTheme } from "@mui/material";
+import { Autocomplete, Avatar, IconButton, List, ListItem, ListItemAvatar, ListItemButton, ListItemText, MenuItem, Select, Stack, TextField, useMediaQuery, useTheme } from "@mui/material";
 import { Block, BlockTitle, Button, Fab, Link, Sheet, Toolbar, ToolbarPane } from "konsta/react";
 import Image from "next/image";
 import { Tables } from '../../../../../lib/supabase/database.types';
@@ -46,8 +46,8 @@ export default function MainMemberDisplay({
   } & {
     invalidateCache: () => Promise<void>;
   },
-  member_state: Record<string, string | null>,
-  updateMemberState: Updater<Record<string, string | null>>,
+  member_state: Record<string, string | string[] | null>,
+  updateMemberState: Updater<Record<string, string | string[] | null>>,
 }) {
   const supabase = useSupabase();
   const router = useRouter();
@@ -442,6 +442,19 @@ export default function MainMemberDisplay({
             value={member_state?.color ? `rgb(${member_state.color})` : 'rgb(255, 255, 255)'}
             onChange={nv => updateMemberState(draft => { draft.color = nv.slice(4, -1) })}
             sx={{ width: '100%' }}
+          />
+          <Autocomplete
+            multiple
+            options={['introject', 'host', 'cohost', 'protector', 'gatekeeper', 'persecutor', 'caretaker', 'trauma holder']}
+            value={member_state.roles as string[] ?? []}
+            onChange={(_, nv) => updateMemberState(draft => { draft.roles = nv })}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                variant="outlined"
+                label="Roles"
+              />
+            )}
           />
           <TextField
             name="username"

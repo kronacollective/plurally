@@ -43,7 +43,7 @@ export default function MemberDisplay({
   const theme = useTheme()
   const is_mobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-  const [ member_state, updateMemberState ] = useImmer<Record<string, string | null>>({});
+  const [ member_state, updateMemberState ] = useImmer<Record<string, string | string[] | null>>({});
   const [ active_tab, setActiveTab ] = useState('main');
 
   const { data: member } = useShortQuery(
@@ -68,6 +68,7 @@ export default function MemberDisplay({
       draft.description = member.description;
       draft.pronouns = member.pronouns;
       draft.color = member.color;
+      draft.roles = member.roles;
     });
   }, [member, updateMemberState]);
 
