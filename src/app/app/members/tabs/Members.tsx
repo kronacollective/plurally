@@ -1,7 +1,7 @@
 import { useShortMutations, useShortQuery } from "@/lib/hooks/useShortQuery";
 import { useSupabase } from "@/lib/supabase/client";
 import { Add, Archive, ArrowDownward, ArrowLeft, ArrowUpward, Check, Close, CreateNewFolder, ExpandLess, ExpandMore, Folder, Settings } from "@mui/icons-material";
-import { IconButton, List, ListItem, ListItemAvatar, ListItemButton, ListItemText, Stack, TextField, useMediaQuery, useTheme } from "@mui/material";
+import { Chip, Grid, IconButton, List, ListItem, ListItemAvatar, ListItemButton, ListItemText, Stack, TextField, useMediaQuery, useTheme } from "@mui/material";
 import { Block, BlockTitle, Button, Fab, Link, Sheet, Toolbar, ToolbarPane } from "konsta/react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -394,24 +394,36 @@ export default function MemberList() {
                 <ListItemButton
                   onClick={() => router.push(`/app/members/${member.id}`)}
                 >
-                  <ListItemAvatar sx={{ mr: 2 }}>
-                    { member && member.avatar ? (
-                      <Image
-                        className="rounded-full"
-                        src={member.avatar}
-                        width={60}
-                        height={60}
-                        alt="Profile picture"
-                      />
-                    ) : (
-                      "?"
-                    )}
-                  </ListItemAvatar>
-                  <ListItemText
-                    primary={member.name}
-                    secondary={member.pronouns}
-                  >
-                  </ListItemText>
+                  <Grid container spacing={2}>
+                    <Grid size={12}>
+                      <Stack direction="row">
+                        <ListItemAvatar sx={{ width: 60, height: 60, mr: 2 }}>
+                          { member && member.avatar ? (
+                            <Image
+                              className="rounded-full"
+                              src={member.avatar}
+                              width={60}
+                              height={60}
+                              alt="Profile picture"
+                            />
+                          ) : (
+                            "?"
+                          )}
+                        </ListItemAvatar>
+                        <ListItemText
+                          primary={member.name}
+                          secondary={member.pronouns}
+                        />
+                      </Stack>
+                    </Grid>
+                    {member.roles && member.roles.length > 0 && <Grid size={12}>
+                      <Stack direction="row" gap={1}>
+                        { member.roles?.map(role => (
+                          <Chip label={role} key={role} />
+                        )) }
+                      </Stack>
+                    </Grid>}
+                  </Grid>
                 </ListItemButton>
               </ListItem>
             )
