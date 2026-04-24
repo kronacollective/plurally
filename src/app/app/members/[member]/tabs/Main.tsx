@@ -17,7 +17,7 @@ import Grainient from "@/app/components/bits/Grainient";
 import { converter, formatHex, parse, random } from "culori";
 
 const AVATAR_SIZES = [300, 300];
-const BANNER_SIZES = ['90vw', '40vh'];
+const BANNER_SIZES = ['100vw', '40vh'];
 
 type FrontMutators = {
   front: (member_id: string) => Promise<void>,
@@ -298,7 +298,7 @@ export default function MainMemberDisplay({
             />
           ) : <Grainient color1={gradient_colors[0]} color2={gradient_colors[1]} color3={gradient_colors[2]} />}
         </Link>
-        <Link onClick={() => setAvatarSheetOpen(true)} style={{ position: 'absolute', top: '10%', left: '50%' }}>
+        <Link onClick={() => setAvatarSheetOpen(true)} style={{ position: 'absolute', top: '10%', left: is_mobile ? '15%' : '50%' }}>
           <Avatar variant="rounded" sx={{ width: AVATAR_SIZES[0], height: AVATAR_SIZES[1], mt: 3, mb: 3, border: `2px solid rgba(${member.color ?? '255, 255, 255'}, 30%)` }}>
             {member && member.avatar ? (
               <Image
@@ -443,8 +443,7 @@ export default function MainMemberDisplay({
             onChange={nv => updateMemberState(draft => { draft.color = nv.slice(4, -1) })}
             sx={{ width: '100%' }}
           />
-          <Autocomplete
-            multiple
+          <Autocomplete multiple freeSolo
             options={['introject', 'host', 'cohost', 'protector', 'gatekeeper', 'persecutor', 'caretaker', 'trauma holder']}
             value={member_state.roles as string[] ?? []}
             onChange={(_, nv) => updateMemberState(draft => { draft.roles = nv })}
