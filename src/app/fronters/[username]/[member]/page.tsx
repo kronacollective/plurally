@@ -52,11 +52,6 @@ export default async function UserMember({
   const member_ids = new Set(members?.map(member => member.id));
   const mipb_ids = new Set(members_in_public_buckets?.map(member => member.member));
   const visible_member_ids = member_ids.intersection(mipb_ids);
-  console.log('visible_member_ids', {
-    member_ids,
-    mipb_ids,
-    visible_member_ids,
-  });
 
   // Get this member
   const { data: member_by_id } = await supabase
