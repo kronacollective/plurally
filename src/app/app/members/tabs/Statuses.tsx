@@ -178,7 +178,15 @@ export default function Statuses() {
               <ListItem
                 key={status.id}
                 style={{
-                  backgroundColor: `rgba(${status.color ?? '255, 255, 255'}, ${is_fronting ? 35 : 20}%)`,
+                  ...(status.banner ? {
+                    backgroundImage: `url(${status.banner})`,
+                    backgroundSize: 'cover',
+                    backgroundPositionY: '50%',
+                    backgroundColor: `rgba(${status.color ?? '255, 255, 255'}, ${is_fronting ? 85 : 90}%)`,
+                    backgroundBlendMode: 'lighten',
+                  } : {
+                    backgroundColor: `rgba(${status.color ?? '255, 255, 255'}, ${is_fronting ? 35 : 20}%)`,
+                  }),
                   borderRadius: '10px',
                   marginBottom: 5,
                 }}

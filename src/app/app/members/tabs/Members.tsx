@@ -367,7 +367,15 @@ export default function MemberList() {
               <ListItem
                 key={member.id}
                 style={{
-                  backgroundColor: `rgba(${member.color ?? '255, 255, 255'}, ${is_fronting ? 35 : 20}%)`,
+                  ...(member.banner ? {
+                    backgroundImage: `url(${member.banner})`,
+                    backgroundSize: 'cover',
+                    backgroundPositionY: '50%',
+                    backgroundColor: `rgba(${member.color ?? '255, 255, 255'}, ${is_fronting ? 90 : 95}%)`,
+                    backgroundBlendMode: 'lighten',
+                  } : {
+                    backgroundColor: `rgba(${member.color ?? '255, 255, 255'}, ${is_fronting ? 35 : 20}%)`,
+                  }),
                   borderRadius: '10px',
                   marginBottom: 5,
                 }}

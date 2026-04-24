@@ -34,7 +34,7 @@ export default function FrontsActive () {
     async () => {
       const { data, error } = await supabase
         .from('fronts')
-        .select('*, member:member( id, color, avatar, name, pronouns )')
+        .select('*, member:member( id, color, avatar, banner, name, pronouns )')
         .eq('account', account!.id)
         .is('end', null);
       if (error) console.error('active_fronts', error);
@@ -76,7 +76,15 @@ export default function FrontsActive () {
             return (
               <ListItem key={af.id}
                 style={{
-                  backgroundColor: `rgba(${af.member.color ?? '255, 255, 255'}, 35%)`,
+                  ...(af.member.banner ? {
+                    backgroundImage: `url(${af.member.banner})`,
+                    backgroundSize: 'cover',
+                    backgroundPositionY: '50%',
+                    backgroundColor: `rgba(${af.member.color ?? '255, 255, 255'}, 90%)`,
+                    backgroundBlendMode: 'lighten',
+                  } : {
+                    backgroundColor: `rgba(${af.member.color ?? '255, 255, 255'}, 35%)`,
+                  }),
                   borderRadius: '10px',
                   marginBottom: 5,
                 }}
