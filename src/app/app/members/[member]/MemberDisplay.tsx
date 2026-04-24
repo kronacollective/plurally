@@ -4,7 +4,7 @@ import { Stack, useMediaQuery, useTheme } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useSupabase } from "@/lib/supabase/client";
 import { Tabbar, TabbarLink, ToolbarPane } from "konsta/react";
-import { DrawTwoTone, Person, Settings, TextFields } from "@mui/icons-material";
+import { Person, Settings, TextFields } from "@mui/icons-material";
 import { useShortMutations, useShortQuery } from "@/lib/hooks/useShortQuery";
 import { useImmer } from "use-immer";
 import { DRAWER_WIDTH } from "@/lib/globals";

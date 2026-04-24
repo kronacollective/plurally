@@ -4,10 +4,12 @@ import useAccount from "@/lib/hooks/useAccount";
 import { useShortQuery } from "@/lib/hooks/useShortQuery";
 import { useSupabase } from "@/lib/supabase/client";
 import { Add } from "@mui/icons-material";
-import { Avatar, List, ListItem, ListItemButton, ListItemText, Stack } from "@mui/material";
+import { Avatar, List, ListItem, ListItemButton, ListItemText, Stack, Typography } from "@mui/material";
+import { format } from "date-fns";
 import { Fab } from "konsta/react";
 import Image from "next/image";
 import Link from "next/link";
+import { useMemo } from "react";
 
 export default function Journal() {
   const supabase = useSupabase();
@@ -24,6 +26,10 @@ export default function Journal() {
     },
   );
 
+  const ordered_entries = useMemo(() => {
+    return entries?.toSorted((a, b) => Number(new Date(b.created_at)) - Number(new Date(a.created_at)));
+  }, [entries]);
+
   return (
     <>
       <Link href="/app/journal/new">
@@ -35,14 +41,14 @@ export default function Journal() {
         />
       </Link>
       <List sx={{ p: 2 }}>
-        { entries?.map(entry => {
+        { ordered_entries?.map(entry => {
           return (
             <ListItem key={entry.id} sx={{ backgroundColor: `rgba(${entry.member.color ?? '255, 255, 255'}, 20%)`, borderRadius: '10px', mb: 2 }}>
               <Link href={`/app/journal/${entry.id}`} style={{ width: '100%' }}>
                 <ListItemButton>
-                  <ListItemText
-                    primary={entry.title}
-                    secondary={<Stack direction="row" sx={{ alignItems: 'center' }}>
+                  <Stack>
+                    { entry.title && <Typography>{entry.title}</Typography> || <Typography variant="caption">[Untitled]</Typography>}
+                    <Stack direction="row" sx={{ alignItems: 'center' }} gap={1}>
                       <Avatar>
                         {entry.member.avatar ? <Image
                           className="rounded-full"
@@ -53,8 +59,10 @@ export default function Journal() {
                         /> : entry.member.name?.slice(0,1)}
                       </Avatar>
                       { entry.member.name }
-                    </Stack>}
-                  />
+                      &nbsp;—&nbsp;
+                      { format(entry.created_at, 'PPpp') }
+                    </Stack>
+                  </Stack>
                 </ListItemButton>
               </Link>
             </ListItem>
