@@ -1,9 +1,9 @@
 'use server';
 
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/server";
 
 export async function getFriendFronters(self_id: string, friend_list: string[]) {
-  const supabase = await createClient();
+  const supabase = await createAdminClient();
 
   const fronters_entries = await Promise.all(friend_list.map(async (friend_id) => {
     // Get buckets we're in from friend

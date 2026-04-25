@@ -1,7 +1,7 @@
 import EditableMarkdownField from "@/app/components/EditableMarkdownField";
 import { useShortQuery } from "@/lib/hooks/useShortQuery";
 import { useSupabase } from "@/lib/supabase/client";
-import { Stack, TextField } from "@mui/material";
+import { Stack } from "@mui/material";
 
 export default function FriendInformation({
   friend_id
