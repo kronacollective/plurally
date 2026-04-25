@@ -1,3 +1,4 @@
+import EditableMarkdownField from "@/app/components/EditableMarkdownField";
 import { useShortQuery } from "@/lib/hooks/useShortQuery";
 import { useSupabase } from "@/lib/supabase/client";
 import { Stack, TextField } from "@mui/material";
@@ -22,26 +23,21 @@ export default function FriendInformation({
   );
 
   return (
-    <Stack gap={2} style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: 10 }}>
-      <TextField disabled
-        label="Username"
-        variant="outlined"
-        value={friend?.username}
-        sx={{ width: '90%' }}
-      />
-      <TextField disabled
-        label="Display name"
-        variant="outlined"
-        value={friend?.display_name}
-        sx={{ width: '90%' }}
-      />
-      <TextField disabled multiline
-        label="Description"
-        variant="outlined"
-        value={friend?.description}
-        minRows={3}
-        sx={{ width: '90%' }}
-      />
-    </Stack>
+    <div style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <Stack gap={2} style={{ width: '90%', display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: 10 }}>
+        <EditableMarkdownField readonly
+          label="Username"
+          value={friend!.username}
+        />
+        <EditableMarkdownField readonly
+          label="Display name"
+          value={friend!.display_name!}
+        />
+        <EditableMarkdownField readonly
+          label="Description"
+          value={friend!.description!}
+        />
+      </Stack>
+    </div>
   );
 }
