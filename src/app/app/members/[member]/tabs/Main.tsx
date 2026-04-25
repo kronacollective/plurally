@@ -222,6 +222,7 @@ export default function MainMemberDisplay({
       update: async (id: string, field: string, value: string | null) => {
         await supabase
           .from('relationships')
+          // @ts-expect-error: This works as usual
           .update({ [field]: value })
           .eq('id', id);
       },

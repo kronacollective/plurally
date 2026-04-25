@@ -61,7 +61,11 @@ export default function FolderDisplay({
       update: async () => {
         await supabase
           .from('folders')
-          .update(folder_state)
+          .update({
+            name: folder_state.name,
+            description: folder_state.description,
+            color: folder_state.color,
+          })
           .eq('id', folder_id);
       },
       deleteFolder: async () => {

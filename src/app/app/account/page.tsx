@@ -90,7 +90,13 @@ export default function Account() {
       update: async () => {
         await supabase
           .from('accounts')
-          .update(account_data)
+          .update({
+            username: account_data.username!,
+            display_name: account_data.display_name!,
+            description: account_data.description!,
+            color: account_data.color!,
+            sp_key: account_data.sp_key!,
+          })
           .eq('id', account!.id);
       }
     },

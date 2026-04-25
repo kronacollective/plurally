@@ -79,7 +79,14 @@ export default function MemberDisplay({
       update: async () => {
         await supabase
           .from('members')
-          .update(member_state)
+          .update({
+            name: member_state.name! as string,
+            username: member_state.username as string,
+            description: member_state.description as string,
+            pronouns: member_state.pronouns as string,
+            color: member_state.color as string,
+            roles: member_state.roles as string[],
+          })
           .eq('id', member_id);
       },
       deleteMember: async () => {
