@@ -3,7 +3,7 @@ import useAccount from "@/lib/hooks/useAccount";
 import { useShortMutations, useShortQuery } from "@/lib/hooks/useShortQuery";
 import { useSupabase } from "@/lib/supabase/client";
 import { Add, Check, Close } from "@mui/icons-material";
-import { List, ListItem, ListItemButton, ListItemText, Stack, TextField, Typography, useMediaQuery, useTheme } from "@mui/material";
+import { List, ListItem, ListItemButton, ListItemText, Stack, TextField, useMediaQuery, useTheme } from "@mui/material";
 import { Block, Button, Link, Sheet, Toolbar, ToolbarPane } from "konsta/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";

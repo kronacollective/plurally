@@ -14,7 +14,7 @@ import useAccount from "@/lib/hooks/useAccount";
 import { useRouter } from "next/navigation";
 import EditableMarkdownField from "@/app/components/EditableMarkdownField";
 import Grainient from "@/app/components/bits/Grainient";
-import { converter, formatHex, parse, random } from "culori";
+import { converter, formatHex, random } from "culori";
 
 const AVATAR_SIZES = [300, 300];
 const BANNER_SIZES = ['100vw', '40vh'];
