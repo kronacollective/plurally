@@ -1,4 +1,5 @@
 'use client';
+import useAccount from "@/lib/hooks/useAccount";
 import { useShortMutations, useShortQuery } from "@/lib/hooks/useShortQuery";
 import { useSupabase } from "@/lib/supabase/client";
 import { Add, Check, Close } from "@mui/icons-material";
@@ -21,19 +22,7 @@ export default function PrivacyBuckets() {
   const theme = useTheme()
   const is_mobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-  const { data: account } = useShortQuery(
-    ['account'],
-    async () => {
-      const { data: user } = await supabase.auth.getUser();
-      const { data } = await supabase
-        .from('accounts')
-        .select()
-        .eq('user', user.user!.id)
-        .single();
-      return data;
-    }
-  );
-
+  const { data: account } = useAccount();
   const { data: buckets } = useShortQuery(
     ['buckets', account?.id],
     async () => {
