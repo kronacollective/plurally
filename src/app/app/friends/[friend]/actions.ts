@@ -1,15 +1,15 @@
 'use server';
 
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/server";
 
 export async function getFriendMembers(self_id: string, friend_id: string) {
-  const supabase = await createClient();
+  const supabase = await createAdminClient();
   // Get buckets we're in from friend
   const { data: buckets_we_are_in_data } = await supabase
     .from('bucket_friends')
-    .select('bucket:buckets!bucket ( id, account ), account')
+    .select('bucket (id, account), account')
     .eq('account', self_id)
-    .eq('buckets.account', friend_id);
+    .eq('bucket.account', friend_id);
   const buckets_we_are_in = buckets_we_are_in_data?.map(bwai => bwai.bucket?.id).filter(x => x);
   // console.log('bwai', self_id, friend_id, buckets_we_are_in_data, buckets_we_are_in);
   // Get all members from buckets we are in
@@ -23,7 +23,7 @@ export async function getFriendMembers(self_id: string, friend_id: string) {
 }
 
 export async function getFriendFields(self_id: string, friend_id: string) {
-  const supabase = await createClient();
+  const supabase = await createAdminClient();
   // Get buckets we're in from friend
   const { data: buckets_we_are_in_data } = await supabase
     .from('bucket_friends')
