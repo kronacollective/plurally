@@ -172,6 +172,12 @@ export default function MemberList() {
     return ordered_members_without_archived;
   }, [active_fronts, members]);
 
+  const [ search, setSearch ] = useState('');
+  const searched_members = useMemo(() => {
+    if (search == '') return ordered_members;
+    return ordered_members.filter(om => om.name?.includes(search));
+  }, [ordered_members, search]);
+
   const archived_members = useMemo(() => {
     return members?.filter(m => m.archived);
   }, [members]);
@@ -360,8 +366,14 @@ export default function MemberList() {
       </Block>
       <Block>
         <BlockTitle style={{ marginBottom: 1 }}>{in_folder ? `Members in folder` : "All members"}</BlockTitle>
+        <TextField
+          value={search}
+          onChange={ev => setSearch(ev.target.value)}
+          label="Search"
+          sx={{ width: '100%' }}
+        />
         <List>
-          { (in_archive ? archived_members : ordered_members)?.map(member => {
+          { (in_archive ? archived_members : searched_members)?.map(member => {
             const is_fronting = active_fronts?.find(fr => fr.member === member.id);
             return (
               <ListItem
