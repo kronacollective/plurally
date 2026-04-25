@@ -5,28 +5,16 @@ import { useSupabase } from "@/lib/supabase/client";
 import { useShortQuery } from "@/lib/hooks/useShortQuery";
 import { useRouter } from "next/navigation";
 import { useMemo } from "react";
+import useAccount from "@/lib/hooks/useAccount";
 
 export default function FriendMembers({
   friend_id
 }: {
   friend_id: string,
 }) {
-  const supabase = useSupabase();
   const router = useRouter();
 
-  const { data: account } = useShortQuery(
-    ['account'],
-    async () => {
-      const { data: user } = await supabase.auth.getUser();
-      const { data } = await supabase
-        .from('accounts')
-        .select()
-        .eq('user', user.user!.id)
-        .single();
-      return data;
-    },
-  );
-
+  const { data: account } = useAccount();
   const { data: members } = useShortQuery(
     [account?.id, 'friend', friend_id, 'members'],
     async () => {
