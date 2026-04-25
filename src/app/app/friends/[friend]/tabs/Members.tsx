@@ -1,7 +1,6 @@
 import { List, ListItem, ListItemAvatar, ListItemButton, ListItemText } from "@mui/material"
 import Image from "next/image"
 import { getFriendMembers } from "../actions";
-import { useSupabase } from "@/lib/supabase/client";
 import { useShortQuery } from "@/lib/hooks/useShortQuery";
 import { useRouter } from "next/navigation";
 import { useMemo } from "react";
@@ -42,7 +41,15 @@ export default function FriendMembers({
             <ListItem
               key={member.id}
               style={{
-                backgroundColor: `rgba(${member.color ?? '255, 255, 255'}, 20%)`,
+                ...(member.banner ? {
+                  backgroundImage: `url(${member.banner})`,
+                  backgroundSize: 'cover',
+                  backgroundPositionY: '50%',
+                  backgroundColor: `rgba(${member.color ?? '255, 255, 255'}, 95%)`,
+                  backgroundBlendMode: 'lighten',
+                } : {
+                  backgroundColor: `rgba(${member.color ?? '255, 255, 255'}, 20%)`,
+                }),
                 borderRadius: '10px',
                 marginBottom: 5,
               }}
