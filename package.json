@@ -22,6 +22,7 @@
     "date-fns": "^4.1.0",
     "dayjs": "^1.11.20",
     "immer": "^11.1.4",
+    "iso-fns": "^1.0.4",
     "konsta": "^5.0.7",
     "mime": "^4.1.0",
     "mui-color-input": "^7.0.0",

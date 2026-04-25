@@ -2,9 +2,10 @@ import { useShortQuery } from "@/lib/hooks/useShortQuery";
 import { useSupabase } from "@/lib/supabase/client"
 import { Tables } from "@/lib/supabase/database.types";
 import { List, ListItem, ListItemAvatar, ListItemText } from "@mui/material";
-import { add, clamp, Duration, formatDuration, interval, intervalToDuration } from "date-fns";
+import { add, clamp, Duration, formatDuration, formatISODuration, interval, intervalToDuration } from "date-fns";
 import Image from "next/image";
 import { useMemo } from "react";
+import { compare, IsoDuration } from "iso-fns";
 
 const addDurations = (duration1: Duration, duration2: Duration) => {
   const base_date = new Date(0) // can probably be any date, 0 just seemed like a good start
@@ -100,10 +101,20 @@ export default function AnalyticsTotals({
     return per_member;
   }, [ clamped_fronts ]);
 
+  const sorted_durations = useMemo(() => {
+    if (!aggregated_durations) return;
+    const entries = Object.entries(aggregated_durations);
+    return entries.toSorted((a, b) => {
+      const [ , duration_a ] = a;
+      const [ , duration_b ] = b;
+      return -compare(formatISODuration(duration_a) as IsoDuration, formatISODuration(duration_b) as IsoDuration);
+    });
+  }, [aggregated_durations]);
+
   return (
     <>
       <List sx={{ width: '100%' }}>
-        { Object.entries(aggregated_durations ?? {}).map(([member_id, duration]) => {
+        { sorted_durations?.map(([member_id, duration]) => {
           const member = aggregated_members[member_id];
           return (
             <ListItem key={member_id}
