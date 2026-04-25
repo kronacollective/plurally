@@ -1,11 +1,10 @@
 'use client';
 import { useShortMutations, useShortQuery } from "@/lib/hooks/useShortQuery";
 import { useSupabase } from "@/lib/supabase/client";
-import { Tables } from "@/lib/supabase/database.types";
 import { Add, Check, Clear } from "@mui/icons-material";
 import { IconButton, List, ListItem, ListItemButton, ListItemText, Stack, TextField, Typography } from "@mui/material";
 import { Block, BlockTitle, Button } from "konsta/react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { getFriendFronters } from "./actions";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";

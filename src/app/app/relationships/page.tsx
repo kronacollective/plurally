@@ -37,10 +37,11 @@ export default function RelationshipsPage() {
   const { data: relationships } = useShortQuery(
     ['relationships', member_list],
     async () => {
-      const { data: origin_relationships } = await supabase
+      const { error, data: origin_relationships } = await supabase
         .from('relationships')
         .select('*,origin_member:members!origin_member(*),target_member:members!target_member(*)')
         .in('origin_member', member_list ?? []);
+      if (error) console.error('relationships!', error);
       return origin_relationships;
     },
   );
