@@ -49,7 +49,7 @@ export default function AppLayout({
   const pathname = usePathname();
   const router = useRouter();
 
-  const theme = useTheme()
+  const theme = useTheme();
   const is_mobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const handleDrawerClose = useCallback(() => {

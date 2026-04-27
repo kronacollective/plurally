@@ -10,15 +10,15 @@ const nextConfig: NextConfig = {
       }
     ]
   },
-  async redirects() {
-    return [
-      {
-        source: '/',
-        destination: '/app',
-        permanent: true,
-      }
-    ]
-  },
+  // async redirects() {
+  //   return [
+  //     {
+  //       source: '/',
+  //       destination: '/app',
+  //       permanent: true,
+  //     }
+  //   ]
+  // },
   async headers() {
     return [
       {

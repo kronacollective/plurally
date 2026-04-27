@@ -40,7 +40,7 @@ export default function MemberDisplay({
 }) {
   const supabase = useSupabase();
 
-  const theme = useTheme()
+  const theme = useTheme();
   const is_mobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const [ member_state, updateMemberState ] = useImmer<Record<string, string | string[] | null>>({});

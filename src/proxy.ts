@@ -15,7 +15,9 @@ export async function proxy(request: NextRequest) {
   } else { // Otherwise redirect to /fronters
     return NextResponse.rewrite(new URL(`/fronters${pathname}`, request.url));
   }
-  // If in login or fronters, just update session
+  // If landing page or related, do nothing
+  if (pathname === '/') return;
+  // If login or fronters, just update session
   if (pathname.startsWith('/login') || pathname.startsWith('/fronters')) {
     return await updateSession(request)
   }
@@ -23,7 +25,7 @@ export async function proxy(request: NextRequest) {
   if (!data) {
     const url = request.nextUrl.clone();
     url.pathname = '/login'
-    return NextResponse.redirect(url);
+    // return NextResponse.redirect(url);
   }
   // Update session
   return await updateSession(request)
