@@ -99,13 +99,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "bucket_friends_account_fkey"
-            columns: ["account"]
-            isOneToOne: false
-            referencedRelation: "accounts_public"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "bucket_friends_bucket_fkey"
             columns: ["bucket"]
             isOneToOne: false
@@ -177,13 +170,6 @@ export type Database = {
             referencedRelation: "accounts"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "buckets_account_fkey"
-            columns: ["account"]
-            isOneToOne: false
-            referencedRelation: "accounts_public"
-            referencedColumns: ["id"]
-          },
         ]
       }
       field_values: {
@@ -244,13 +230,6 @@ export type Database = {
             columns: ["account"]
             isOneToOne: false
             referencedRelation: "accounts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fields_account_fkey"
-            columns: ["account"]
-            isOneToOne: false
-            referencedRelation: "accounts_public"
             referencedColumns: ["id"]
           },
         ]
@@ -319,13 +298,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "folders_account_fkey"
-            columns: ["account"]
-            isOneToOne: false
-            referencedRelation: "accounts_public"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "folders_subfolder_of_fkey"
             columns: ["subfolder_of"]
             isOneToOne: false
@@ -359,24 +331,10 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "friends_related_fkey"
-            columns: ["related"]
-            isOneToOne: false
-            referencedRelation: "accounts_public"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "friends_relating_fkey"
             columns: ["relating"]
             isOneToOne: false
             referencedRelation: "accounts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "friends_relating_fkey"
-            columns: ["relating"]
-            isOneToOne: false
-            referencedRelation: "accounts_public"
             referencedColumns: ["id"]
           },
         ]
@@ -415,13 +373,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "fronts_account_fkey"
-            columns: ["account"]
-            isOneToOne: false
-            referencedRelation: "accounts_public"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "fronts_member_fkey"
             columns: ["member"]
             isOneToOne: false
@@ -429,6 +380,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      invites: {
+        Row: {
+          id: string
+          ip: string | null
+          used: boolean
+        }
+        Insert: {
+          id: string
+          ip?: string | null
+          used?: boolean
+        }
+        Update: {
+          id?: string
+          ip?: string | null
+          used?: boolean
+        }
+        Relationships: []
       }
       journal: {
         Row: {
@@ -464,13 +433,6 @@ export type Database = {
             columns: ["account"]
             isOneToOne: false
             referencedRelation: "accounts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "journal_account_fkey"
-            columns: ["account"]
-            isOneToOne: false
-            referencedRelation: "accounts_public"
             referencedColumns: ["id"]
           },
           {
@@ -543,13 +505,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "members_account_fkey"
-            columns: ["account"]
-            isOneToOne: false
-            referencedRelation: "accounts_public"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "members_member_of_fkey"
             columns: ["member_of"]
             isOneToOne: false
@@ -586,13 +541,6 @@ export type Database = {
             columns: ["account"]
             isOneToOne: false
             referencedRelation: "accounts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "notifications_account_fkey"
-            columns: ["account"]
-            isOneToOne: false
-            referencedRelation: "accounts_public"
             referencedColumns: ["id"]
           },
         ]
@@ -717,13 +665,6 @@ export type Database = {
             referencedRelation: "accounts"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "polls_account_fkey"
-            columns: ["account"]
-            isOneToOne: false
-            referencedRelation: "accounts_public"
-            referencedColumns: ["id"]
-          },
         ]
       }
       relationships: {
@@ -807,35 +748,17 @@ export type Database = {
             referencedRelation: "accounts"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "subscriptions_account_fkey"
-            columns: ["account"]
-            isOneToOne: true
-            referencedRelation: "accounts_public"
-            referencedColumns: ["id"]
-          },
         ]
       }
     }
     Views: {
-      accounts_public: {
-        Row: {
-          id: string | null
-          username: string | null
-        }
-        Insert: {
-          id?: string | null
-          username?: string | null
-        }
-        Update: {
-          id?: string | null
-          username?: string | null
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      _member_belongs_to_auth_user: {
+        Args: { _member_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never
