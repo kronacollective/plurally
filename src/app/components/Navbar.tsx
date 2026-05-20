@@ -20,10 +20,10 @@ export default function Navbar() {
       <Drawer open={drawer_open} onClose={() => setDrawerOpen(false)} sx={{ borderRadius: '5px' }}>
         <List sx={{ width: '9em', borderRadius: '5px' }}>
           <ListItem>
-            <Link href="/about"><Typography className={stack_sans.className}>About</Typography></Link>
+            <Link href="/about"><Typography>About</Typography></Link>
           </ListItem>
           <ListItem>
-            <Link href="/features"><Typography className={stack_sans.className}>Features</Typography></Link>
+            <Link href="/features"><Typography>Features</Typography></Link>
           </ListItem>
         </List>
       </Drawer>
@@ -40,18 +40,22 @@ export default function Navbar() {
                 { is_mobile && <IconButton onClick={() => setDrawerOpen(true)}>
                   <Menu/>
                 </IconButton>}
-                <Image
-                  src="/favicon-96x96.png"
-                  alt="Icon"
-                  width={30}
-                  height={30}
-                  style={{ borderRadius: '5px' }}
-                />
-                <Typography variant="h6" color="white" className={stack_sans.className}>Plurally</Typography>
+                <Link href="/">
+                  <Stack direction="row" spacing={1} alignItems="center">
+                    <Image
+                      src="/favicon-96x96.png"
+                      alt="Icon"
+                      width={30}
+                      height={30}
+                      style={{ borderRadius: '5px' }}
+                    />
+                    <Typography variant="h6">Plurally</Typography>
+                  </Stack>
+                </Link>
               </Stack>
               { !is_mobile && <Stack direction="row" spacing={2}>
-                <Link href="/about"><Typography color="white" className={stack_sans.className}>About</Typography></Link>
-                <Link href="/features"><Typography color="white" className={stack_sans.className}>Features</Typography></Link>
+                <Link href="/about"><Typography>About</Typography></Link>
+                <Link href="/features"><Typography>Features</Typography></Link>
               </Stack> }
               <Link href="/login">
                 <Button rounded style={{ width: '7em' }}>

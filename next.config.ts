@@ -10,6 +10,9 @@ const nextConfig: NextConfig = {
       }
     ]
   },
+  async redirects() {
+    return [];
+  },
   // async redirects() {
   //   return [
   //     {
