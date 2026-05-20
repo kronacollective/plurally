@@ -13,6 +13,7 @@ import { dateCalendarClasses, DatePicker, DateTimePicker } from "@mui/x-date-pic
 import { formatISO, parseJSON } from "date-fns";
 import EditableDateField from "@/app/components/EditableDateField";
 import EditableColorField from "@/app/components/EditableColorField";
+import useAccount from "@/lib/hooks/useAccount";
 
 type FavMutators = {
   save: (field_id: string, value: Json) => Promise<void>,
@@ -20,9 +21,6 @@ type FavMutators = {
 
 export default function FieldsMemberDisplay({
   member,
-  member_mutations,
-  member_state,
-  updateMemberState,
 }: {
   member: Tables<'members'>
   member_mutations: {
@@ -36,22 +34,7 @@ export default function FieldsMemberDisplay({
 }) {
   const supabase = useSupabase();
 
-  const theme = useTheme()
-  const is_mobile = useMediaQuery(theme.breakpoints.down('sm'));
-
-  const { data: account } = useShortQuery(
-    ["account"],
-    async () => {
-      const { data: user } = await supabase.auth.getUser();
-      const { data: account } = await supabase
-        .from('accounts')
-        .select()
-        .eq('user', user.user!.id)
-        .single();
-      return account;
-    },
-  );
-
+  const { data: account } = useAccount();
   const { data: fields } = useShortQuery(
     ['fields', account?.id],
     async () => {
