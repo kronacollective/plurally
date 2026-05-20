@@ -383,18 +383,18 @@ export type Database = {
       }
       invites: {
         Row: {
+          email: string | null
           id: string
-          ip: string | null
           used: boolean
         }
         Insert: {
+          email?: string | null
           id: string
-          ip?: string | null
           used?: boolean
         }
         Update: {
+          email?: string | null
           id?: string
-          ip?: string | null
           used?: boolean
         }
         Relationships: []
