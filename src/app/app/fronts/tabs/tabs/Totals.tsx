@@ -2,10 +2,10 @@ import { useShortQuery } from "@/lib/hooks/useShortQuery";
 import { useSupabase } from "@/lib/supabase/client"
 import { Tables } from "@/lib/supabase/database.types";
 import { List, ListItem, ListItemAvatar, ListItemText } from "@mui/material";
-import { add, clamp, Duration, formatDuration, formatISODuration, interval, intervalToDuration } from "date-fns";
+import { add, clamp, Duration, format, formatDuration, formatISODuration, interval, intervalToDuration } from "date-fns";
 import Image from "next/image";
 import { useMemo } from "react";
-import { compare, IsoDuration } from "iso-fns";
+import { compare, IsoDate, IsoDuration } from "iso-fns";
 
 const addDurations = (duration1: Duration, duration2: Duration) => {
   const base_date = new Date(0) // can probably be any date, 0 just seemed like a good start
@@ -107,7 +107,7 @@ export default function AnalyticsTotals({
     return entries.toSorted((a, b) => {
       const [ , duration_a ] = a;
       const [ , duration_b ] = b;
-      return -compare(formatISODuration(duration_a) as IsoDuration, formatISODuration(duration_b) as IsoDuration);
+      return -compare(formatISODuration(duration_a) as IsoDuration, formatISODuration(duration_b) as IsoDuration, { relativeTo: format(new Date(), 'yyyy-MM-dd') as IsoDate });
     });
   }, [aggregated_durations]);
 
