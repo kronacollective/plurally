@@ -1,7 +1,5 @@
-'use client';
-import useAccount from "@/lib/hooks/useAccount"
-import { useShortQuery } from "@/lib/hooks/useShortQuery"
-import { useSupabase } from "@/lib/supabase/client";
+'use client'
+
 import dynamic from "next/dynamic";
 import { useMemo } from "react";
 const ForceGraph2D = dynamic(() => import('react-force-graph-2d'), { ssr: false });
@@ -14,38 +12,17 @@ const getContrastYIQ = (r: number, g: number, b: number) => {
   return (yiq >= 128) ? 'black' : 'white';
 };
 
-export default function RelationshipsPage() {
-  const supabase = useSupabase();
-
-  const { data: account } = useAccount();
-  const { data: members } = useShortQuery(
-    ['members', account?.id],
-    async () => {
-      // Get all members from account
-      const { data: members } = await supabase
-        .from('members')
-        .select()
-        .eq('account', account!.id)
-        .eq('is_status', false);
-      return members;
-    }
-  );
-  const member_list = useMemo(() => {
-    return members?.map(member => member.id);
-  }, [members]);
-
-  const { data: relationships } = useShortQuery(
-    ['relationships', member_list],
-    async () => {
-      const { error, data: origin_relationships } = await supabase
-        .from('relationships')
-        .select('*,origin_member:members!origin_member(*),target_member:members!target_member(*)')
-        .in('origin_member', member_list ?? []);
-      if (error) console.error('relationships!', error);
-      return origin_relationships;
-    },
-  );
-
+export default function RelationshipMap() {
+  const aqua = useMemo(() => ({
+    "idx": 31, "id": "hA0c3VU-BjMbdazqPYwWV", "name": "🌟Aqua", "pronouns": "He/him", "avatar": "https://myrssvqfvsuovxsqdlfi.supabase.co/storage/v1/object/public/avatars/hA0c3VU-BjMbdazqPYwWV-1774981650921.jpg", "color": "23, 255, 244", "banner": "https://myrssvqfvsuovxsqdlfi.supabase.co/storage/v1/object/public/banners/hA0c3VU-BjMbdazqPYwWV-1777045192356.jpg", "roles": ["introject", "pseudo-host"]
+  }), []);
+  const ruby = useMemo(() => ({
+    "idx":47,"id":"uhxeVFRkdqK-wKO7cIenZ","created_at":"2026-03-26 14:50:19.90541+00","name":"‧˚꒰  💫 ꒱    ruby!    ໒꒱ᵎᵎ","pronouns":"ᯓᰔᩚ    her   ⸝⸝   it","description":"trying out it/its!,!!!","avatar":null,"color":"255, 182, 232","is_status":false,"archived":false,"member_of":null,"username":null,"unlisted":false,"banner":null,"roles":null
+  }), []);
+  const relationships = useMemo(() => [
+    {"idx":6,"id":"bee46c57-7302-4b2a-b0d0-d5aaa986a92d","directional":false,"origin_arbitrary":null,"origin_member": aqua ,"origin_label":"Brother","target_arbitrary":"Ruby","target_member": ruby,"target_label":"Sister","type":null,"label":"siblings with","origin_type":null,"target_type":"external"},
+    {"idx":7,"id":"c98e1374-c4b8-4de6-a12c-6f7fba108046","directional":false,"origin_arbitrary":null,"origin_member": aqua ,"origin_label":"Son","target_arbitrary":"Ai","target_member":null,"target_label":"Mom","type":null,"label":"son of","origin_type":null,"target_type":"arbitrary"},
+  ], [aqua, ruby]);
   const nodes = useMemo(() => {
     const node_map: Record<string, Record<string, string>> = {};
     relationships?.forEach(rel => {
@@ -102,8 +79,11 @@ export default function RelationshipsPage() {
     <>
       <ForceGraph2D
         graphData={{ nodes, links }}
+        width={500}
+        height={250}
         linkLabel="label"
         linkWidth={10}
+        linkColor={() => "rgba(255, 255, 255, 35%)"}
         nodeLabel="label"
         nodeCanvasObject={(node, ctx, global_scale) => {
           const font_size = 20/global_scale;
