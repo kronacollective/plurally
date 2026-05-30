@@ -94,7 +94,7 @@ export default function FieldsMemberDisplay({
                 ) : (
                   field?.type === 'color' ? (
                     <EditableColorField readonly
-                      label="Color"
+                      label={field.name}
                       value={fav?.value as string ?? '#ffffff'}
                     />
                   ) : (

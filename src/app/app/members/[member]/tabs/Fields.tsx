@@ -115,7 +115,7 @@ export default function FieldsMemberDisplay({
                 ) : (
                   field.type === 'color' ? (
                     <EditableColorField
-                      label="Color"
+                      label={field.name}
                       value={fav?.value as string ?? '#ffffff'}
                       onSave={ncv => fav_mutators.save(field.id, ncv)}
                     />
