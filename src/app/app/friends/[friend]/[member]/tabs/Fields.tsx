@@ -5,7 +5,7 @@ import { useSupabase } from "@/lib/supabase/client";
 import EditableMarkdownField from "@/app/components/EditableMarkdownField";
 import EditableDateField from "@/app/components/EditableDateField";
 import EditableColorField from "@/app/components/EditableColorField";
-import { getFriendFields } from "../../actions";
+// import { getFriendFields } from "../../actions";
 
 export default function FieldsMemberDisplay({
   member,
@@ -32,8 +32,18 @@ export default function FieldsMemberDisplay({
   const { data: fields } = useShortQuery(
     ['fields', account?.id, friend_id],
     async () => {
-      const fields = await getFriendFields(account!.id, friend_id);
-      return fields;
+      // const fields = await getFriendFields(account!.id, friend_id);
+      const { data: friend_buckets } = await supabase
+        .from('buckets')
+        .select()
+        .eq('account', friend_id);
+      const { data: fields } = await supabase
+        .from('bucket_fields')
+        .select('bucket, field (*)')
+        .in('bucket', friend_buckets!.map(fb => fb.id))
+      console.log('fields', fields);
+      const all_fields = fields?.map(field => field.field);
+      return all_fields;
     },
     [ account ],
   );
@@ -58,6 +68,7 @@ export default function FieldsMemberDisplay({
       <Stack gap={2} display="flex" sx={{ width: '100%', justifyContent: 'center', alignItems: 'center' }}>
         <List sx={{ width: '90%' }}>
         { fields?.map(field => {
+          if (!field) return;
           const fav = fields_and_values?.find(fav => fav.field === field.id && fav.member === member.id);
           return (
             <ListItem key={`${field.id}-${member.id}`}
@@ -67,13 +78,13 @@ export default function FieldsMemberDisplay({
                 marginBottom: 5,
               }}
             >
-              { field.type === 'text' ? (
+              { field?.type === 'text' ? (
                 <EditableMarkdownField readonly
                   label={field.name}
                   value={fav?.value as string ?? ''}
                 />
               ) : (
-                ['date', 'datetime', 'daymonth'].includes(field.type) ? (
+                ['date', 'datetime', 'daymonth'].includes(field?.type) ? (
                   <EditableDateField readonly
                     // @ts-expect-error Type will match
                     type={field.type}
@@ -81,7 +92,7 @@ export default function FieldsMemberDisplay({
                     value={fav?.value ?? ''}
                   />
                 ) : (
-                  field.type === 'color' ? (
+                  field?.type === 'color' ? (
                     <EditableColorField readonly
                       label="Color"
                       value={fav?.value as string ?? '#ffffff'}
