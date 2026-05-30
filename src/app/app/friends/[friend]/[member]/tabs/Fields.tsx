@@ -49,7 +49,7 @@ export default function FieldsMemberDisplay({
   );
 
   const { data: fields_and_values } = useShortQuery(
-    ['field-values', member.id],
+    ['field-values', member.id, fields],
     async () => {
       const { data } = await supabase
         .from('field_values')
