@@ -9,9 +9,11 @@ import { useImmer } from "use-immer";
 import { importFromSimplyPlural, sendNotification, subscribeUser, unsubscribeUser } from "./actions";
 import { urlBase64ToUint8Array } from "@/lib/pwa";
 import { Send } from "@mui/icons-material";
+import { useRouter } from "next/navigation";
 
 export default function Account() {
   const supabase = useSupabase();
+  const router = useRouter();
 
   const [ supported, setSupported ] = useState(false);
   const [ subscription, setSubscription ] = useState<PushSubscription | null>(null);
@@ -199,6 +201,17 @@ export default function Account() {
         ) : (
           <Typography>Notifications are not supported.</Typography>
         )}
+      </Block>
+      <BlockTitle>Log out</BlockTitle>
+      <Block>
+        <Button
+          onClick={() => {
+            supabase.auth.signOut();
+            router.push('/login');
+          }}
+        >
+          Log out
+        </Button>
       </Block>
     </Stack>
   )

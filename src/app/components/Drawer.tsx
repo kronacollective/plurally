@@ -88,17 +88,6 @@ export default function MenuDrawer({
           media={<PersonIcon/>}
         />
       </MenuList>
-      <Divider variant="middle"/>
-      <MenuList>
-        <MenuListItem
-          title="Log out"
-          onClick={() => {
-            supabase.auth.signOut();
-            router.push('/login');
-          }}
-          media={<Logout/>}
-        />
-      </MenuList>
     </div>
   )
 }
