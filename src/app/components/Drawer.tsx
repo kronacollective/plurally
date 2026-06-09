@@ -1,9 +1,9 @@
-import { MenuList, MenuListItem } from "konsta/react";
-import PersonIcon from '@mui/icons-material/Person';
-import React from "react";
-import { Divider } from "@mui/material";
 import { useSupabase } from "@/lib/supabase/client";
-import { CoPresent, Dataset, Description, Diversity2, Group, HowToVote, Link, Logout, TextFields, Timelapse } from "@mui/icons-material";
+import { Dataset, Description, Diversity2, Group, HowToVote, Link, Logout, TextFields, Timelapse } from "@mui/icons-material";
+import PersonIcon from '@mui/icons-material/Person';
+import { Box, Divider, Stack, Typography } from "@mui/material";
+import { MenuList, MenuListItem } from "konsta/react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 export default function MenuDrawer({
@@ -15,6 +15,17 @@ export default function MenuDrawer({
   const router = useRouter();
   return (
     <div>
+      <Box sx={{ mt: 2 }}>
+        <Stack direction="row" justifyContent="center" alignItems="center" gap={1}>
+          <Image
+            src="/favicon.svg"
+            alt="Plurally logo"
+            width={50}
+            height={50}
+          />
+          <Typography variant="h4">Plurally</Typography>
+        </Stack>
+      </Box>
       <MenuList>
         <MenuListItem
           title="Members"
