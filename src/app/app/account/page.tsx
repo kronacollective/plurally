@@ -1,7 +1,7 @@
 'use client';
 import { useShortMutations, useShortQuery } from "@/lib/hooks/useShortQuery";
 import { useSupabase } from "@/lib/supabase/client";
-import { List, ListItem, ListItemText, Stack, Switch, TextField, Typography } from "@mui/material";
+import { Divider, List, ListItem, ListItemText, Stack, Switch, TextField, Typography } from "@mui/material";
 import { Block, BlockTitle, Button } from "konsta/react";
 import { MuiColorInput } from "mui-color-input";
 import { useCallback, useEffect, useState } from "react";
@@ -215,6 +215,8 @@ export default function Account() {
           >
             Log out
           </Button>
+          <Divider />
+          <Typography variant="body1">Tap the button five times to delete your account.</Typography>
           <Button
             className="bg-red-700"
             onClick={async () => {
