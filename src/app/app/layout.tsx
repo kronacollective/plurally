@@ -17,6 +17,7 @@ const ssh = Stack_Sans_Headline();
 const sst = Stack_Sans_Text();
 
 const TITLES = {
+  '^/app$': 'Dashboard',
   '^/app/members$': 'Members',
   '^/app/members/(.+)$': 'Member',
   '^/app/fronts$': 'Fronts',

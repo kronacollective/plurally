@@ -1,5 +1,5 @@
 import { useSupabase } from "@/lib/supabase/client";
-import { Dataset, Description, Diversity2, Group, HowToVote, Link, Logout, TextFields, Timelapse } from "@mui/icons-material";
+import { Dashboard, Dataset, Description, Diversity2, Group, HowToVote, Link, Logout, TextFields, Timelapse } from "@mui/icons-material";
 import PersonIcon from '@mui/icons-material/Person';
 import { Box, Divider, Stack, Typography } from "@mui/material";
 import { MenuList, MenuListItem } from "konsta/react";
@@ -27,6 +27,12 @@ export default function MenuDrawer({
         </Stack>
       </Box>
       <MenuList>
+        <MenuListItem
+          title="Dashboard"
+          active={page === '/app'}
+          onClick={() => router.push('/app')}
+          media={<Dashboard/>}
+        />
         <MenuListItem
           title="Members"
           active={page === '/app/members'}
