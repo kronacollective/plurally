@@ -18,6 +18,8 @@ export default function Account() {
   const [ supported, setSupported ] = useState(false);
   const [ subscription, setSubscription ] = useState<PushSubscription | null>(null);
 
+  const [ delete_counter, setDeleteCounter ] = useState(5);
+
   const { data: account } = useShortQuery(
     ['account'],
     async () => {
@@ -202,16 +204,32 @@ export default function Account() {
           <Typography>Notifications are not supported.</Typography>
         )}
       </Block>
-      <BlockTitle>Log out</BlockTitle>
+      <BlockTitle>Account</BlockTitle>
       <Block>
-        <Button
-          onClick={() => {
-            supabase.auth.signOut();
-            router.push('/login');
-          }}
-        >
-          Log out
-        </Button>
+        <Stack spacing={1}>
+          <Button
+            onClick={() => {
+              supabase.auth.signOut();
+              router.push('/login');
+            }}
+          >
+            Log out
+          </Button>
+          <Button
+            className="bg-red-700"
+            onClick={async () => {
+              if (delete_counter >= 0) {
+                await supabase.rpc('delete_user');
+                supabase.auth.signOut();
+                router.push('/login');
+              } else {
+                setDeleteCounter(dc => dc - 1);
+              }
+            }}
+          >
+            Delete account
+          </Button>
+        </Stack>
       </Block>
     </Stack>
   )

@@ -755,10 +755,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      _can_select_bucket_via_bucket_friends: {
+        Args: { p_bucket_id: string }
+        Returns: boolean
+      }
       _member_belongs_to_auth_user: {
         Args: { _member_id: string }
         Returns: boolean
       }
+      delete_user: { Args: never; Returns: undefined }
     }
     Enums: {
       [_ in never]: never
