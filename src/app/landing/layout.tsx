@@ -59,6 +59,21 @@ export default function LandingLayout({
             </Stack>
           </Link>
         </Grid>
+        <Grid size={{ xs: 12, lg: 4 }}>
+          <Stack>
+            <Typography variant="h6">Site navigation</Typography>
+            <Link href="/"><Typography variant="subtitle1">Home</Typography></Link>
+            <Link href="/about"><Typography variant="subtitle1">About</Typography></Link>
+            <Link href="/features"><Typography variant="subtitle1">Features</Typography></Link>
+          </Stack>
+        </Grid>
+        <Grid size={{ xs: 12, lg: 4 }}>
+          <Stack>
+            <Typography variant="h6">Legal</Typography>
+            <Link href="/privacy-policy"><Typography variant="subtitle1">Privacy policy</Typography></Link>
+            <Link href="/terms-of-use"><Typography variant="subtitle1">Terms of Use</Typography></Link>
+          </Stack>
+        </Grid>
       </Grid>
       </div>
     </ThemeProvider>

@@ -62,7 +62,6 @@ const Feature = ({
 }
 
 export default function FeaturesPage() {
-  const site_url = process.env.NEXT_PUBLIC_SITE_URL;
   const aqua = {
     "idx": 31, "id": "hA0c3VU-BjMbdazqPYwWV", "name": "🌟Aqua", "pronouns": "He/him", "avatar": "https://myrssvqfvsuovxsqdlfi.supabase.co/storage/v1/object/public/avatars/hA0c3VU-BjMbdazqPYwWV-1774981650921.jpg", "color": "23, 255, 244", "banner": "https://myrssvqfvsuovxsqdlfi.supabase.co/storage/v1/object/public/banners/hA0c3VU-BjMbdazqPYwWV-1777045192356.jpg", "roles": ["introject", "pseudo-host"]
   };

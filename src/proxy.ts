@@ -16,8 +16,7 @@ export async function proxy(request: NextRequest) {
     return NextResponse.rewrite(new URL(`/fronters${pathname}`, request.url));
   }
   // If landing page or related, do nothing
-  console.log('pathname', pathname);
-  if (pathname === '/' || pathname === '/features' || pathname === '/about') {
+  if (pathname === '/' || pathname === '/features' || pathname === '/about' || pathname === '/privacy-policy' || pathname === '/terms-of-use') {
     return NextResponse.rewrite(new URL(`/landing${pathname}`, request.url));
   };
   // If login or fronters, just update session
