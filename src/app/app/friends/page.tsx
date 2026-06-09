@@ -132,7 +132,8 @@ export default function Friends() {
       const { data } = await supabase
         .from('notifications')
         .select()
-        .eq('account', account!.id);
+        .eq('account', account!.id)
+        .order('created_at', { ascending: false });
       return data;
     },
   );
