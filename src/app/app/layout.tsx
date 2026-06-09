@@ -11,6 +11,10 @@ import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { DRAWER_WIDTH } from "@/lib/globals";
 import { useSupabase } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
+import { Stack_Sans_Headline, Stack_Sans_Text } from "next/font/google";
+
+const ssh = Stack_Sans_Headline();
+const sst = Stack_Sans_Text();
 
 const TITLES = {
   '^/app/members$': 'Members',
@@ -31,6 +35,15 @@ const TITLES = {
 };
 
 const THEME = createTheme({
+  typography: {
+    h1: { fontFamily: 'Stack Sans Headline,Helvetica,Arial' },
+    h2: { fontFamily: 'Stack Sans Headline,Helvetica,Arial' },
+    h3: { fontFamily: 'Stack Sans Headline,Helvetica,Arial' },
+    h4: { fontFamily: 'Stack Sans Headline,Helvetica,Arial' },
+    h5: { fontFamily: 'Stack Sans Headline,Helvetica,Arial' },
+    h6: { fontFamily: 'Stack Sans Headline,Helvetica,Arial' },
+    fontFamily: 'Stack Sans Text,Helvetica,Arial',
+  },
   colorSchemes: {
     dark: true,
   },
@@ -112,7 +125,7 @@ export default function AppLayout({
       <ThemeProvider theme={THEME}>
         <QueryProvider>
           <LocalizationProvider dateAdapter={AdapterDateFns}>
-            <Page>
+            <Page className={sst.className}>
               {/* <Box
                 component="nav"
                 sx={{ width: { sm: `calc(100% - ${DRAWER_WIDTH}px)`}, ml: { sm: `${DRAWER_WIDTH}px` } }}
