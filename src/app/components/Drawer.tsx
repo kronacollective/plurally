@@ -11,7 +11,6 @@ export default function MenuDrawer({
 }: {
   page: string,
 }) {
-  const supabase = useSupabase();
   const router = useRouter();
   return (
     <div>
@@ -22,6 +21,7 @@ export default function MenuDrawer({
             alt="Plurally logo"
             width={50}
             height={50}
+            style={{ borderRadius: '10px' }}
           />
           <Typography variant="h4">Plurally</Typography>
         </Stack>
